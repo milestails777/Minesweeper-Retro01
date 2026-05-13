@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <title>Retrosweeper</title>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Press+Start+2P"/>
+        <link rel="stylesheet" href="stylesweeper.css"/>
+    </head>
+    <body>
+        <div class="game">
+            <nav class="nav">
+                <div id="mines-left">000</div>
+                <button id="smiley"></button>
+                <div id="timer"></div>
+            </nav>
+            <div id="grid"></div>
+        </div>
+        <div class="audio">
+            <audio id="click" src="audio/click.mp3" preload="auto"></audio>
+            <audio id="click2" src="audio/click2.mp3" preload="auto"></audio>
+            <audio id="boom" src="audio/boom.mp3" preload="auto"></audio>
+            <audio id="win" src="audio/win.mp3" preload="auto"></audio>
+            <audio id="gong" src="audio/gong.mp3" preload="auto"></audio>
+        </div>
+        <div id="secretka"></div>
+        <script src="scriptsweeper.js"></script>
+    </body>
+</html>

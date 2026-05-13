@@ -1,0 +1,215 @@
+body {
+    width: 100%;
+    height: 100vh;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #018281;
+    font-family: 'Press Start 2P', monospace;
+}
+
+.game {
+    display: inline-block;
+    background: #c0c0c3;
+    padding: 4px;
+}
+
+.nav {
+    display: flex;
+    margin-bottom: 5px;
+    padding: 2px;
+    justify-content: space-between;
+}
+
+#mines-left,
+#timer {
+    display: flex;
+    align-items: center;
+    color: #10a817;
+    background: #000;
+    padding: 3px;
+    font-size: 18px;
+}
+
+#smiley {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0;
+    width: 34px;
+    height: 34px;
+    font-size: 23px;
+    background: inherit;
+}
+
+#smiley::after {
+    content: "";
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 26px;
+    height: 26px;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-image: url("../Minesweeper Retro/assets/MNSW smiley.png");
+}
+#smiley.lost::after {
+    content: "";
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 26px;
+    height: 26px;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-image: url("../Minesweeper Retro/assets/MNSW death.png");
+}
+
+#smiley.won::after {
+    content: "";
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 26px;
+    height: 26px;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-image: url("../Minesweeper Retro/assets/MNSW durr.png");
+}
+
+#grid {
+    display: inline-grid;
+    user-select: none;
+}
+
+#grid button:disabled.exploded {
+    background: #ea3323;
+}
+
+.game 
+#grid button,
+#smiley {
+    border: 2px solid;
+    border-color: #fff #808080 #808080 #fff;
+}
+
+.nav,
+#grid,
+#smiley:active {
+    border: 2px solid;
+    border-color: #808080 #fff #fff #808080;
+}
+
+#grid button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    width: 26px;
+    height: 26px;
+    font-family: inherit;
+    font-size: 16px;
+    background: inherit;
+    position: relative;
+}
+
+#grid button:disabled {
+    background: #c0c0c3;
+    border: 1px solid #808080;
+    border-bottom: none;
+    border-right: none;
+    color: inherit;
+}
+
+#grid button.flagged::after {
+    content: "";
+    display: flex;          
+    justify-content: center;
+    align-items: center;
+    width: 24px;
+    height: 24px;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-image: url("../Minesweeper Retro/assets/MNSW flag.png");
+}
+
+#grid button.mine::after {
+    content: "";
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 22px;
+    height: 22px;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-image: url("../Minesweeper Retro/assets/MNSW bomb.png");
+}
+
+
+#grid button.value-1 {
+    color: #0100f3;
+}
+
+#grid button.value-2 {
+    color: #367c21;
+}
+
+#grid button.value-3 {
+    color: #e93323;
+}
+
+#grid button.value-4 {
+    color: #020079;
+}
+
+#grid button.value-5 {
+    color: #78150e;
+}
+
+#grid button.value-6 {
+    color: #387e7e;
+}
+
+#grid button.value-7 {
+    color: #000000;
+}
+
+#grid button.value-8 {
+    color: #808080;
+}
+
+#secretka {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-image: url('../Minesweeper Retro/assets/secret.png');
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+    z-index: 9999;
+    opacity: 0;
+    pointer-events: none;
+    display: none;
+}
+
+.show-secretka {
+    display: block !important;
+    animation: secretkaFade 3s forwards;
+}
+
+@keyframes secretkaFade {
+    0% { opacity: 0; }
+    20% { opacity: 1; }
+    80% { opacity: 1; }
+    100% { opacity: 0; }
+}
+
