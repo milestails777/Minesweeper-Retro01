@@ -107,6 +107,18 @@ body.win-bg #timer {
     border-color: #808080 #fff #fff #808080;
 }
 
+.timer-container {
+    font-family: 'W95FA', 'MS Sans Serif', sans-serif;
+    font-size: 12px;
+    position: fixed;
+    top: 880px;
+    left: 97.9%;
+    font-size: 120%;
+    transform: translateX(-50%);
+    z-index: 1000;
+}
+
+
 #mines-left,
 #timer {
     display: flex;
@@ -316,4 +328,21 @@ body.win-bg #timer {
             /* Жестко задаем размер: картинка сожмется ровно под ширину экрана телефона */
             background-size: 100% auto !important;
     }
+
+    .timer-container {
+        font-family: 'W95FA', 'MS Sans Serif', sans-serif;
+        font-size: 12px;
+        position: fixed;
+        top: 798px;
+        left: 91.8%;
+        font-size: 110%;
+        transform: translateX(-50%);
+        z-index: 1000;
+    }
+
+}
+
+@font-face {
+    font-family: 'W95FA';
+    src: url('./fonts/W95FA.otf') format('open-type');
 }
