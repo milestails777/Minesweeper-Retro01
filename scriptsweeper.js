@@ -1,3 +1,5 @@
+// Писька
+
 function initGameState({ width, height, minesCount }) {
     const state = {
         minesCount,
