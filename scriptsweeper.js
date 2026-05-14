@@ -9,10 +9,11 @@ function initGameState({ width, height, minesCount }) {
         ),
         timerStart: undefined,
         timerInterval: undefined,
+        isMuted: false, 
+        musicStarted: false,
    };
 
    insertMines(state, minesCount);
-
    return state;
 }
 
@@ -102,6 +103,9 @@ function restartGame(view, state) {
     clearInterval(state.timerInterval);
     document.body.classList.remove('lost-bg');
     document.body.classList.remove('win-bg');
+    manageMusic('stop');
+    state.musicStarted = false;
+    document.getElementById('mute-button').style.display = 'none';
 
     const newState = initGameState({
         width: state.fields[0].length,
@@ -119,17 +123,22 @@ function ensureTimerStarted(view, state) {
         return;
     }
 
+    document.getElementById('mute-button').style.display = 'flex';
+    if (!state.musicStarted) {
+        manageMusic('play', 'bg');
+        state.musicStarted = true;
+    }
     state.timerStart = new Date();
     state.timerInterval = setInterval(() => {
         const secondsElapsed = Math.floor(
             (new Date() - state.timerStart) / 1000
         );
-
         view.timer.innerText = `${secondsElapsed}`.padStart(3, '0');
     }, 1000);
 }
 
 function handleGameEvents(view, state) {
+    document.getElementById('mute-button').addEventListener('click', () => toggleMute(view, state));
     view.smiley.addEventListener('click', () => {
         playEffect('click');
         restartGame(view, state);
@@ -212,6 +221,7 @@ function handleFieldReveal(view, state, button) {
                     playEffect('boom');
                 }
                 document.body.classList.add('lost-bg');
+                manageMusic('stop');
                 const window = document.querySelector('.window');
                 window.classList.remove('shake');
                 void window.offsetWidth;
@@ -229,9 +239,10 @@ function handleFieldReveal(view, state, button) {
     }
 
     if (state.fieldsLeft === 0) {
-        playEffect('win');
-        document.body.classList.add('win-bg');
         view.smiley.className = 'won';
+        playEffect('win');
+        manageMusic('play', 'win');
+        document.body.classList.add('win-bg');
         gameOver(view, state);
     }
 }
@@ -271,6 +282,13 @@ function revelEmptyArea(grid, state, x, y) {
 function gameOver(view, state) {
     clearInterval(state.timerInterval);
     state.isGameOver = true;
+
+    const isWin = view.smiley.classList.contains('won');
+
+    if (!isWin) {
+        document.getElementById('mute-button').style.display = 'none';
+        manageMusic('stop');
+    }
 
     for (const button of view.grid.children) {
         const { x, y } = getButtonPosition(button);
@@ -338,6 +356,49 @@ function main() {
     initView(view, state);
     handleGameEvents(view, state);
     console.log(state);
+}
+
+function manageMusic(action, type = 'bg') {
+    const mainMusic = document.getElementById('main-music');
+    const winMusic = document.getElementById('win-music');
+    
+    mainMusic.pause();
+    winMusic.pause();
+
+    if (action === 'stop') return;
+
+    const current = (type === 'win') ? winMusic : mainMusic;
+    const isMuted = document.getElementById('mute-button').classList.contains('muted');
+    if (!isMuted) {
+        current.currentTime = 0;
+        current.play().catch(() => {});
+    }
+}
+
+function toggleMute(view, state) {
+    const button = document.getElementById('mute-button');
+    const text = button.querySelector('.mute-text');
+    const isWin = view.smiley.classList.contains('won');
+    
+    state.isMuted = !state.isMuted;
+
+if (state.isMuted) {
+        button.classList.replace('unmuted', 'muted');
+        text.innerText = 'OFF';
+        manageMusic('stop');
+    } else {
+        button.classList.replace('muted', 'unmuted');
+        text.innerText = 'ON';
+        
+        // Если уже победили — включаем музыку победы
+        if (isWin) {
+            manageMusic('play', 'win');
+        } 
+        // Если игра идет — включаем фоновую музыку
+        else if (!state.isGameOver && state.musicStarted) {
+            manageMusic('play', 'bg');
+        }
+    }   
 }
 
 main();

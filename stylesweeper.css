@@ -38,6 +38,8 @@ body.win-bg #timer {
 
 .window {
     display: inline-flex;
+    justify-content: center;
+    position: relative;
     flex-direction: column;
     background: #c0c0c3;
     padding: 3px;
@@ -218,6 +220,47 @@ body.win-bg #timer {
 
 .shake {
     animation: shake 0.2s ease-in-out;
+}
+
+#mute-button {
+    display: flex;
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    align-items: center;
+    gap: 15px;
+    background: #c0c0c3;
+    border: 2px solid;
+    border-color: #fff #808080 #808080 #fff;
+    padding: 4px 4px;
+    font-family: inherit;
+    cursor: pointer;
+    outline: none;
+}
+
+#mute-button:active {
+    border-color: #808080 #fff #fff #808080;
+}
+
+#mute-button .mute-icon {
+    width: 36px;
+    height: 36px;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+#mute-button .mute-text {
+    font-size: 18px;
+    margin-top: 4px;
+}
+
+#mute-button.unmuted .mute-icon {
+    background-image: url('./assets/MNSW music-on.png');
+}
+
+#mute-button.muted .mute-icon {
+    background-image: url('./assets/MNSW music-off.png');
 }
 
 @keyframes secretkaFade {
