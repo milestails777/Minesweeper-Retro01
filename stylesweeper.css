@@ -12,6 +12,24 @@ body {
     font-family: 'Press Start 2P', monospace;
 }
 
+.bg {
+    position: fixed;       /* Фиксируем на экране при скролле */
+    top: 0;
+    left: 0;
+    width: 100vw;          /* Растягиваем на всю ширину экрана */
+    height: 100vh;         /* Растягиваем на всю высоту экрана */
+    z-index: -1;           /* Отправляем на самый задний план (под контент) */
+            
+            /* Настройки самой картинки */
+    background-image: url('./assets/background.png'); 
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+            
+            /* Отключаем взаимодействие мышкой (клики пройдут сквозь фон) */
+    pointer-events: none;  
+}
+
 body.lost-bg {
     background: linear-gradient(-45deg, #D91A1A, #B41C1C, #8F1D1E, #6B1F20, #462022, #212224);
     background-size: 400% 400%;
@@ -279,4 +297,23 @@ body.win-bg #timer {
     50% { transform: translate(0, 4px); }
     75% { transform: translate(0, -2px); }
     100% { transform: translate(0, 0); }
+}
+
+@media (max-width: 768px) {
+    .bg {
+        position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%; /* Занимает всю высоту страницы, а не экрана */
+            z-index: -1;
+            pointer-events: none;
+            
+            background-image: url('./assets/backgroundmobile.png'); 
+            background-repeat: no-repeat;
+            background-position: top center;
+            
+            /* Жестко задаем размер: картинка сожмется ровно под ширину экрана телефона */
+            background-size: 100% auto !important;
+    }
 }
