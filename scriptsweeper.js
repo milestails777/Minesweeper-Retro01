@@ -100,6 +100,8 @@ function initView(view, state) {
 
 function restartGame(view, state) {
     clearInterval(state.timerInterval);
+    document.body.classList.remove('lost-bg');
+    document.body.classList.remove('win-bg');
 
     const newState = initGameState({
         width: state.fields[0].length,
@@ -157,7 +159,7 @@ function handleGameEvents(view, state) {
 }
 
 function triggerSecretka() {
-    if (Math.random() > 0.05) {
+    if (Math.random() > 0.01) {
         return false;
     }
 
@@ -181,6 +183,7 @@ function handleFieldFlag(view, state, button) {
         return;
     }
 
+    playEffect('flag');
     const isFlagged = button.classList.toggle('flagged');
 
     state.minesLeft += isFlagged ? -1 : 1;
@@ -192,6 +195,7 @@ function handleFieldReveal(view, state, button) {
     const {x, y} = getButtonPosition(button);
 
     if (button.classList.contains('flagged')) {
+        playEffect('click2');
         return;
     }
 
@@ -204,7 +208,14 @@ function handleFieldReveal(view, state, button) {
     switch(state.fields[y][x]) {
         case -1:
             if (revealField(state, button)) {
-                playEffect('boom');
+                if (!secretkaTriggered) {
+                    playEffect('boom');
+                }
+                document.body.classList.add('lost-bg');
+                const window = document.querySelector('.window');
+                window.classList.remove('shake');
+                void window.offsetWidth;
+                window.classList.add('shake');
                 button.classList.add('exploded');
                 view.smiley.className = 'lost';
                 gameOver(view, state);
@@ -219,6 +230,7 @@ function handleFieldReveal(view, state, button) {
 
     if (state.fieldsLeft === 0) {
         playEffect('win');
+        document.body.classList.add('win-bg');
         view.smiley.className = 'won';
         gameOver(view, state);
     }

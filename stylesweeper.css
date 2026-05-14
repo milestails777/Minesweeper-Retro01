@@ -6,49 +6,121 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    background: #018281;
+    background: linear-gradient(-45deg, #00feef, #09ebee, #19ceeb, #28acea, #388ee9, #2d76e0);
+    background-size: 400% 400%;
+    animation: gradientBG 20s ease infinite;
     font-family: 'Press Start 2P', monospace;
+}
+
+body.lost-bg {
+    background: linear-gradient(-45deg, #D91A1A, #B41C1C, #8F1D1E, #6B1F20, #462022, #212224);
+    background-size: 400% 400%;
+    animation: gradientBG 5s ease infinite;
+}
+
+body.win-bg {
+    background: linear-gradient(-45deg, #CDFF03, #C2F70F, #B8EF1B, #ADE628, #A3DE34, #98D640);
+    background-size: 400% 400%;
+    animation: gradientBG 5s ease infinite;
+}
+
+body.lost-bg #mines-left,
+body.lost-bg #timer {
+    color: #ff0000;
+    text-shadow: 0 0 8px rgba(255, 0, 0, 0.7);
+}
+
+body.win-bg #mines-left,
+body.win-bg #timer {
+    color: #c3f313;
+    text-shadow: 0 0 8px rgba(226, 241, 5, 0.7);
+}
+
+.window {
+    display: inline-flex;
+    flex-direction: column;
+    background: #c0c0c3;
+    padding: 3px;
+    box-shadow: inset -1px -1px #0a0a0a, 
+                inset 1px 1px #dfdfdf, 
+                inset -2px -2px #808080, 
+                inset 2px 2px #ffffff;
+}
+
+.title-bar {
+    background: linear-gradient(90deg, #000080, #1084d0);
+    padding: 3px 5px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2px;
+}
+
+.title-bar-text {
+    font-weight: bold;
+    color: white;
+    letter-spacing: 0;
+    font-size: 11px;
+}
+
+.window-body {
+    padding: 10px;
+    display: flex;
+    justify-content: center;
 }
 
 .game {
     display: inline-block;
     background: #c0c0c3;
-    padding: 4px;
+    padding: 6px;
+    border: 3px solid;
+    border-color: #808080 #fff #fff #808080;
 }
 
 .nav {
     display: flex;
-    margin-bottom: 5px;
-    padding: 2px;
     justify-content: space-between;
+    align-items: center;
+    margin-bottom: 6px;
+    padding: 4px;
+    border: 2px solid;
+    border-color: #808080 #fff #fff #808080;
 }
 
 #mines-left,
 #timer {
     display: flex;
     align-items: center;
+    justify-content: center;
     color: #10a817;
+    text-shadow: 0 0 8px rgba(76, 143, 76, 0.7);
     background: #000;
-    padding: 3px;
+    padding: 5px 5px;
     font-size: 18px;
+    min-width: 50px;
 }
 
 #smiley {
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 0;
     width: 34px;
     height: 34px;
-    font-size: 23px;
-    background: inherit;
+    background: #c0c0c3;
+    border: 2px solid;
+    border-color: #fff #808080 #808080 #fff;
+    cursor: pointer;
+    padding: 0;
+    outline: none;
+}
+
+#smiley:active {
+    border-color: #808080 #fff #fff #808080;
 }
 
 #smiley::after {
     content: "";
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    display: block;
     width: 26px;
     height: 26px;
     background-size: contain;
@@ -56,55 +128,18 @@ body {
     background-position: center;
     background-image: url("../Minesweeper Retro/assets/MNSW smiley.png");
 }
-#smiley.lost::after {
-    content: "";
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 26px;
-    height: 26px;
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: center;
-    background-image: url("../Minesweeper Retro/assets/MNSW death.png");
-}
 
-#smiley.won::after {
-    content: "";
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 26px;
-    height: 26px;
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: center;
-    background-image: url("../Minesweeper Retro/assets/MNSW durr.png");
-}
+#smiley.lost::after { background-image: url("../Minesweeper Retro/assets/MNSW death.png"); }
+#smiley.won::after { background-image: url("../Minesweeper Retro/assets/MNSW durr.png"); }
 
 #grid {
     display: inline-grid;
     user-select: none;
-}
-
-#grid button:disabled.exploded {
-    background: #ea3323;
-}
-
-.game 
-#grid button,
-#smiley {
-    border: 2px solid;
-    border-color: #fff #808080 #808080 #fff;
-}
-
-.nav,
-#grid,
-#smiley:active {
-    border: 2px solid;
+    border: 3px solid;
     border-color: #808080 #fff #fff #808080;
 }
 
+/* Стили ячеек (плиток) */
 #grid button {
     display: flex;
     align-items: center;
@@ -114,25 +149,34 @@ body {
     height: 26px;
     font-family: inherit;
     font-size: 16px;
-    background: inherit;
+    background: #c0c0c3;
     position: relative;
+    box-sizing: border-box;
+    border: 3px solid;
+    border-color: #fff #808080 #808080 #fff;
+}
+
+#grid button:active:not(:disabled) {
+    border-width: 1px;
+    border-color: #808080;
 }
 
 #grid button:disabled {
     background: #c0c0c3;
     border: 1px solid #808080;
-    border-bottom: none;
-    border-right: none;
     color: inherit;
+    cursor: default;
+}
+
+#grid button:disabled.exploded {
+    background: #ea3323;
 }
 
 #grid button.flagged::after {
     content: "";
-    display: flex;          
-    justify-content: center;
-    align-items: center;
-    width: 24px;
-    height: 24px;
+    display: block;
+    width: 20px;
+    height: 20px;
     background-size: contain;
     background-repeat: no-repeat;
     background-position: center;
@@ -141,64 +185,30 @@ body {
 
 #grid button.mine::after {
     content: "";
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 22px;
-    height: 22px;
+    display: block;
+    width: 20px;
+    height: 20px;
     background-size: contain;
     background-repeat: no-repeat;
     background-position: center;
     background-image: url("../Minesweeper Retro/assets/MNSW bomb.png");
 }
 
-
-#grid button.value-1 {
-    color: #0100f3;
-}
-
-#grid button.value-2 {
-    color: #367c21;
-}
-
-#grid button.value-3 {
-    color: #e93323;
-}
-
-#grid button.value-4 {
-    color: #020079;
-}
-
-#grid button.value-5 {
-    color: #78150e;
-}
-
-#grid button.value-6 {
-    color: #387e7e;
-}
-
-#grid button.value-7 {
-    color: #000000;
-}
-
-#grid button.value-8 {
-    color: #808080;
-}
+#grid button.value-1 { color: #0100f3; }
+#grid button.value-2 { color: #367c21; }
+#grid button.value-3 { color: #e93323; }
+#grid button.value-4 { color: #020079; }
+#grid button.value-5 { color: #78150e; }
+#grid button.value-6 { color: #387e7e; }
+#grid button.value-7 { color: #000000; }
+#grid button.value-8 { color: #808080; }
 
 #secretka {
     position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
+    top: 0; left: 0; width: 100vw; height: 100vh;
     background-image: url('../Minesweeper Retro/assets/secret.png');
-    background-size: contain;
-    background-position: center;
-    background-repeat: no-repeat;
-    z-index: 9999;
-    opacity: 0;
-    pointer-events: none;
-    display: none;
+    background-size: contain; background-position: center; background-repeat: no-repeat;
+    z-index: 9999; opacity: 0; pointer-events: none; display: none;
 }
 
 .show-secretka {
@@ -206,10 +216,24 @@ body {
     animation: secretkaFade 3s forwards;
 }
 
-@keyframes secretkaFade {
-    0% { opacity: 0; }
-    20% { opacity: 1; }
-    80% { opacity: 1; }
-    100% { opacity: 0; }
+.shake {
+    animation: shake 0.2s ease-in-out;
 }
 
+@keyframes secretkaFade {
+    0% { opacity: 0; } 20% { opacity: 1; } 80% { opacity: 1; } 100% { opacity: 0; }
+}
+
+@keyframes gradientBG {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+@keyframes shake {
+    0% { transform: translate(0, 0); }
+    25% { transform: translate(0, -4px); }
+    50% { transform: translate(0, 4px); }
+    75% { transform: translate(0, -2px); }
+    100% { transform: translate(0, 0); }
+}
