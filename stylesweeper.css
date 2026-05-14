@@ -129,8 +129,8 @@ body.win-bg #timer {
     background-image: url("./assets/MNSW smiley.png");
 }
 
-#smiley.lost::after { background-image: url("/assets/MNSW death.png"); }
-#smiley.won::after { background-image: url("/assets/MNSW durr.png"); }
+#smiley.lost::after { background-image: url("./assets/MNSW death.png"); }
+#smiley.won::after { background-image: url("./assets/MNSW durr.png"); }
 
 #grid {
     display: inline-grid;
@@ -180,7 +180,7 @@ body.win-bg #timer {
     background-size: contain;
     background-repeat: no-repeat;
     background-position: center;
-    background-image: url("/assets/MNSW flag.png");
+    background-image: url("./assets/MNSW flag.png");
 }
 
 #grid button.mine::after {
@@ -191,7 +191,7 @@ body.win-bg #timer {
     background-size: contain;
     background-repeat: no-repeat;
     background-position: center;
-    background-image: url("/assets/MNSW bomb.png");
+    background-image: url("./assets/MNSW bomb.png");
 }
 
 #grid button.value-1 { color: #0100f3; }
@@ -206,7 +206,7 @@ body.win-bg #timer {
 #secretka {
     position: fixed;
     top: 0; left: 0; width: 100vw; height: 100vh;
-    background-image: url('/assets/secret.png');
+    background-image: url('./assets/secret.png');
     background-size: contain; background-position: center; background-repeat: no-repeat;
     z-index: 9999; opacity: 0; pointer-events: none; display: none;
 }
