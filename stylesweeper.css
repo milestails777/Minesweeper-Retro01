@@ -126,11 +126,11 @@ body.win-bg #timer {
     background-size: contain;
     background-repeat: no-repeat;
     background-position: center;
-    background-image: url("../assets/MNSW smiley.png");
+    background-image: url("./assets/MNSW smiley.png");
 }
 
-#smiley.lost::after { background-image: url("../assets/MNSW death.png"); }
-#smiley.won::after { background-image: url("../assets/MNSW durr.png"); }
+#smiley.lost::after { background-image: url("./assets/MNSW death.png"); }
+#smiley.won::after { background-image: url("./assets/MNSW durr.png"); }
 
 #grid {
     display: inline-grid;
@@ -180,7 +180,7 @@ body.win-bg #timer {
     background-size: contain;
     background-repeat: no-repeat;
     background-position: center;
-    background-image: url("../assets/MNSW flag.png");
+    background-image: url("./assets/MNSW flag.png");
 }
 
 #grid button.mine::after {
@@ -191,7 +191,7 @@ body.win-bg #timer {
     background-size: contain;
     background-repeat: no-repeat;
     background-position: center;
-    background-image: url("../assets/MNSW bomb.png");
+    background-image: url("./assets/MNSW bomb.png");
 }
 
 #grid button.value-1 { color: #0100f3; }
