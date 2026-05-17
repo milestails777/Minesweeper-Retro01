@@ -240,7 +240,6 @@ function handleFieldReveal(view, state, button) {
 
     if (state.fieldsLeft === 0) {
         view.smiley.className = 'won';
-        playEffect('win');
         manageMusic('play', 'win');
         document.body.classList.add('win-bg');
         gameOver(view, state);
@@ -390,11 +389,9 @@ if (state.isMuted) {
         button.classList.replace('muted', 'unmuted');
         text.innerText = 'ON';
         
-        // Если уже победили — включаем музыку победы
         if (isWin) {
             manageMusic('play', 'win');
         } 
-        // Если игра идет — включаем фоновую музыку
         else if (!state.isGameOver && state.musicStarted) {
             manageMusic('play', 'bg');
         }

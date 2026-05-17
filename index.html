@@ -36,39 +36,26 @@
     <audio id="click2" src="audio/click2.mp3" preload="auto"></audio>
     <audio id="flag" src="audio/flag.mp3" preload="auto"></audio>
     <audio id="boom" src="audio/boom.mp3" preload="auto"></audio>
-    <audio id="win" src="audio/win.mp3" preload="auto"></audio>
     <audio id="gong" src="audio/gong.mp3" preload="auto"></audio>
     <audio id="main-music" src="audio/main-music.mp3" loop preload="auto"></audio>
     <audio id="win-music" src="audio/win-music.mp3" loop preload="auto"></audio>
 </div>
 <div id="secretka"></div>
-
 <div class="timer-container">
     <div id="timer-display">00:00</div>
 </div>
-
 <script>
     (function() {
     const timerElement = document.getElementById('timer-display');
-
     function updateClock() {
         const now = new Date(); 
-        
         let hours = now.getHours();  
         let minutes = now.getMinutes(); 
-
-        
         hours = String(hours).padStart(2, '0');
         minutes = String(minutes).padStart(2, '0');
-
-        
         timerElement.textContent = `${hours}:${minutes}`;
     }
-
-    
     setInterval(updateClock, 1000);
-    
-    
     updateClock();
 })();
 </script>
