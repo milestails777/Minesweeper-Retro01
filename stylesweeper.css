@@ -13,20 +13,16 @@ body {
 }
 
 .bg {
-    position: fixed;       /* Фиксируем на экране при скролле */
+    position: fixed;
     top: 0;
     left: 0;
-    width: 100vw;          /* Растягиваем на всю ширину экрана */
-    height: 100vh;         /* Растягиваем на всю высоту экрана */
-    z-index: -1;           /* Отправляем на самый задний план (под контент) */
-            
-            /* Настройки самой картинки */
+    width: 100vw;
+    height: 100vh;
+    z-index: -1;
     background-image: url('./assets/background.png'); 
     background-repeat: no-repeat;
     background-size: cover;
     background-position: center;
-            
-            /* Отключаем взаимодействие мышкой (клики пройдут сквозь фон) */
     pointer-events: none;  
 }
 

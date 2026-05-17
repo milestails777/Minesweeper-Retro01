@@ -11,22 +11,27 @@ function initGameState({ width, height, minesCount }) {
         timerInterval: undefined,
         isMuted: false, 
         musicStarted: false,
+        minesPlaced: false,
    };
 
-   insertMines(state, minesCount);
    return state;
 }
 
-function insertMines(state, minesCount) {
-    const size = state.fieldsLeft;
+function insertMines(state, minesCount, firstX, firstY) {
+    const width = state.fields[0].length;
+    const height = state.fields.length;
+    const size = width * height;
+    const firstIndex = firstY * width + firstX;
 
     const indices = new Set();
     while (indices.size < minesCount) {
         const index = Math.floor(Math.random() * size);
-        indices.add(index);
+        
+        if (index !== firstIndex) {
+            indices.add(index);
+        }
     }
-
-    const width = state.fields[0].length;
+    
     for (const index of indices) {
         const y = Math.floor(index / width);
         const x = index % width;
@@ -192,10 +197,14 @@ function handleFieldFlag(view, state, button) {
         return;
     }
 
-    playEffect('flag');
-    const isFlagged = button.classList.toggle('flagged');
+    const isFlagged = button.classList.contains('flagged');
+    if (!isFlagged && state.minesLeft <= 0) {
+        return;
+    }
 
-    state.minesLeft += isFlagged ? -1 : 1;
+    playEffect('flag');
+    button.classList.toggle('flagged');
+    state.minesLeft += isFlagged ? 1 : -1;
     view.minesLeft.innerText = `${state.minesLeft}`.padStart(3, '0');
 }
 
@@ -206,6 +215,11 @@ function handleFieldReveal(view, state, button) {
     if (button.classList.contains('flagged')) {
         playEffect('click2');
         return;
+    }
+
+    if (!state.minesPlaced) {
+        insertMines(state, state.minesCount, x, y);
+        state.minesPlaced = true;
     }
 
     const cellValue = state.fields[y][x];
