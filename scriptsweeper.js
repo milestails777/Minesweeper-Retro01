@@ -351,27 +351,6 @@ function playEffect(id) {
     }
 }
 
-function main() {
-    const state = initGameState({
-        width: 10,
-        height: 12,
-        minesCount: 12,
-    });
-
-    const view = {
-        minesLeft: document.getElementById('mines-left'),
-        smiley: document.getElementById('smiley'),
-        timer: document.getElementById('timer'),
-        grid: document.getElementById('grid'),
-    }
-
-    createFieldButtons(view, state);
-    initView(view, state);
-    handleGameEvents(view, state);
-    initTaskbarClock();
-    console.log(state);
-}
-
 function manageMusic(action, type = 'bg') {
     const mainMusic = document.getElementById('main-music');
     const winMusic = document.getElementById('win-music');
@@ -426,6 +405,27 @@ function initTaskbarClock() {
 
     setInterval(updateClock, 1000);
     updateClock();
+}
+
+function main() {
+    const state = initGameState({
+        width: 10,
+        height: 12,
+        minesCount: 12,
+    });
+
+    const view = {
+        minesLeft: document.getElementById('mines-left'),
+        smiley: document.getElementById('smiley'),
+        timer: document.getElementById('timer'),
+        grid: document.getElementById('grid'),
+    }
+
+    createFieldButtons(view, state);
+    initView(view, state);
+    handleGameEvents(view, state);
+    initTaskbarClock();
+    console.log(state);
 }
 
 main();
