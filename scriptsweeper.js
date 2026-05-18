@@ -149,6 +149,11 @@ function handleGameEvents(view, state) {
         restartGame(view, state);
     });
 
+    const startButton = document.querySelector('.start-button');
+    if (startButton) {
+        startButton.addEventListener('click', () => playEffect('click'));
+    }
+    
     view.grid.addEventListener('contextmenu', (event) => 
         event.preventDefault()
     );
