@@ -1,3 +1,16 @@
+@font-face {
+    font-family: 'W95FA';
+    src: url('./fonts/W95FA.otf') format('opentype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'MS Sans Serif';
+    src: url('./fonts/MSSS.ttf') format('truetype');
+    font-weight: bolder;
+}
+
 body {
     width: 100%;
     height: 100vh;
@@ -10,8 +23,8 @@ body {
     background-size: 400% 400%;
     animation: gradientBG 20s ease infinite;
     font-family: 'Press Start 2P', monospace;
+    box-sizing: border-box;
 }
-
 
 body.lost-bg {
     background: linear-gradient(-45deg, #D91A1A, #B41C1C, #8F1D1E, #6B1F20, #462022, #212224);
@@ -90,18 +103,6 @@ body.win-bg #timer {
     border-color: #808080 #fff #fff #808080;
 }
 
-.timer-container {
-    font-family: 'W95FA', 'MS Sans Serif', sans-serif;
-    font-size: 12px;
-    position: fixed;
-    top: 880px;
-    left: 97.9%;
-    font-size: 120%;
-    transform: translateX(-50%);
-    z-index: 1000;
-}
-
-
 #mines-left,
 #timer {
     display: flex;
@@ -154,7 +155,6 @@ body.win-bg #timer {
     border-color: #808080 #fff #fff #808080;
 }
 
-/* Стили ячеек (плиток) */
 #grid button {
     display: flex;
     align-items: center;
@@ -294,60 +294,94 @@ body.win-bg #timer {
     100% { transform: translate(0, 0); }
 }
 
-@font-face {
-    font-family: 'W95FA';
-    src: url('./fonts/W95FA.otf') format('open-type');
-    font-weight: normal;
-    font-style: normal;
-}
-
 .taskbar {
     position: fixed;
     bottom: 0;
     left: 0;
     width: 100%;
-    height: 28px;
-    background: #c0c0c3;
+    height: 42px;
+    background: #c0c0c0;
     display: flex;
-    justify-content: flex-end;
+    justify-content: space-between;
     align-items: center;
-    padding: 2px;
+    padding: 2px 4px;
     z-index: 10000;
-    border-top: 2px solid #ffffff;
-    box-shadow: inset 0 1px #ffffff, 0 -1px #808080;
+    border-top: 2px solid #dfdfdf; 
+    box-shadow: inset 0 1px #fff, 0 -1px #808080;
+    box-sizing: border-box;
 }
 
 .taskbar-tray {
     display: flex;
     align-items: center;
-    height: 100%;
+    height: 32px;
+    width: 60px;
     padding: 0 10px;
-    margin-right: 4px;
-    font-family: 'W95FA', sans-serif;
-    font-size: 12px;
-    background: #c0c0c3;
+    background: #c0c0c0;
     border: 2px solid;
     border-color: #808080 #ffffff #ffffff #808080;
+    box-sizing: border-box;
 }
 
 #timer-display {
     font-family: 'W95FA', sans-serif;
-    font-size: 14px;
+    font-size: 18px;
     color: #000;
+}
+
+.start-button {
+    display: flex;
+    align-items: center;
+    height: 34px;
+    padding: 2px 10px 2px 4px;
+    background: #c0c0c0;
+    cursor: pointer;
+    border: 3px solid;
+    border-color: #ffffff #808080 #808080 #ffffff;
+    outline-offset: -4px;
+    box-sizing: border-box;
+}
+
+.start-button:active {
+    border-color: #808080 #ffffff #ffffff #808080;
+    padding: 4px 8px 1px 6px;
+}
+
+.start-icon {
+    height: 26px;
+    width: auto;
+    margin-right: 4px;
+    background-image: url('assets/start_button_sample.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    image-rendering: pixelated;
+}
+
+.start-text {
+    font-family: 'MS Sans Serif', sans-serif;
+    font-size: 16px;
+    font-weight: bolder;
+    color: #000;
+
+    -webkit-font-smoothing: none;     
+    -moz-osx-font-smoothing: grayscale; 
+    font-smooth: never;                
+    text-rendering: optimizeSpeed;
 }
 
 @media (max-width: 768px) {
     .bg {
         position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
-            pointer-events: none;
-            background-image: url('./assets/backgroundmobile.png'); 
-            background-repeat: no-repeat;
-            background-position: top center;
-            background-size: 100% auto !important;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: -1;
+        pointer-events: none;
+        background-image: url('./assets/backgroundmobile.png'); 
+        background-repeat: no-repeat;
+        background-position: top center;
+        background-size: 100% auto !important;
     }
 }
