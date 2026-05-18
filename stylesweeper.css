@@ -12,19 +12,6 @@ body {
     font-family: 'Press Start 2P', monospace;
 }
 
-.bg {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    z-index: -1;
-    background-image: url('./assets/background.png'); 
-    background-repeat: no-repeat;
-    background-size: cover;
-    background-position: center;
-    pointer-events: none;  
-}
 
 body.lost-bg {
     background: linear-gradient(-45deg, #D91A1A, #B41C1C, #8F1D1E, #6B1F20, #462022, #212224);
@@ -307,6 +294,48 @@ body.win-bg #timer {
     100% { transform: translate(0, 0); }
 }
 
+@font-face {
+    font-family: 'W95FA';
+    src: url('./fonts/W95FA.otf') format('open-type');
+    font-weight: normal;
+    font-style: normal;
+}
+
+.taskbar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 28px;
+    background: #c0c0c3;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    padding: 2px;
+    z-index: 10000;
+    border-top: 2px solid #ffffff;
+    box-shadow: inset 0 1px #ffffff, 0 -1px #808080;
+}
+
+.taskbar-tray {
+    display: flex;
+    align-items: center;
+    height: 100%;
+    padding: 0 10px;
+    margin-right: 4px;
+    font-family: 'W95FA', sans-serif;
+    font-size: 12px;
+    background: #c0c0c3;
+    border: 2px solid;
+    border-color: #808080 #ffffff #ffffff #808080;
+}
+
+#timer-display {
+    font-family: 'W95FA', sans-serif;
+    font-size: 14px;
+    color: #000;
+}
+
 @media (max-width: 768px) {
     .bg {
         position: absolute;
@@ -321,21 +350,4 @@ body.win-bg #timer {
             background-position: top center;
             background-size: 100% auto !important;
     }
-
-    .timer-container {
-        font-family: 'W95FA', 'MS Sans Serif', sans-serif;
-        font-size: 12px;
-        position: fixed;
-        top: 798px;
-        left: 91.8%;
-        font-size: 110%;
-        transform: translateX(-50%);
-        z-index: 1000;
-    }
-
-}
-
-@font-face {
-    font-family: 'W95FA';
-    src: url('./fonts/W95FA.otf') format('open-type');
 }

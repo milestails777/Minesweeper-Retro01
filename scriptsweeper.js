@@ -368,6 +368,7 @@ function main() {
     createFieldButtons(view, state);
     initView(view, state);
     handleGameEvents(view, state);
+    initTaskbarClock();
     console.log(state);
 }
 
@@ -410,6 +411,21 @@ if (state.isMuted) {
             manageMusic('play', 'bg');
         }
     }   
+}
+
+function initTaskbarClock() {
+    const timerElement = document.getElementById('timer-display');
+    if (!timerElement) return;
+
+    function updateClock() {
+        const now = new Date();
+        let hours = String(now.getHours()).padStart(2, '0');
+        let minutes = String(now.getMinutes()).padStart(2, '0');
+        timerElement.textContent = `${hours}:${minutes}`;
+    }
+
+    setInterval(updateClock, 1000);
+    updateClock();
 }
 
 main();
