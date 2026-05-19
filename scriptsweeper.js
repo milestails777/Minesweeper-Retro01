@@ -13,6 +13,7 @@ function initGameState({ width, height, minesCount }) {
         musicStarted: false,
         minesPlaced: false,
         currentBgMusicId: undefined,
+        currentWinMusicId: undefined,
    };
 
    return state;
@@ -94,7 +95,7 @@ function getButtonPosition(button) {
 }
 
 function initView(view, state) {
-    view.smiley.removeAttribute('class');
+    view.smiley.classList.remove('won', 'lost');
     view.minesLeft.innerText = `${state.minesLeft}`.padStart(3, '0');
     view.timer.innerText = '000';
 
@@ -123,7 +124,6 @@ function restartGame(view, state) {
     });
 
     Object.assign(state, newState);
-
     initView(view, state);
 }
 
@@ -135,8 +135,10 @@ function ensureTimerStarted(view, state) {
     document.getElementById('mute-button').style.display = 'flex';
     if (!state.musicStarted) {
         const bgTracks = ['music-1', 'music-2', 'music-3', 'music-4', 'music-5', 'music-6', 'music-7'];
+        const winTracks = ['win-1', 'win-2', 'win-3'];
         const randomIndex = Math.floor(Math.random() * bgTracks.length);
         state.currentBgMusicId = bgTracks[randomIndex];
+        state.currentWinMusicId = winTracks[randomIndex];
         manageMusic(state, 'play', 'bg');
         state.musicStarted = true;
     }
@@ -266,7 +268,8 @@ function handleFieldReveal(view, state, button) {
                 }
                 
                 button.classList.add('exploded');
-                view.smiley.className = 'lost';
+                view.smiley.classList.remove('won');
+                view.smiley.classList.add('lost');
                 gameOver(view, state);
             }
             break;
@@ -278,7 +281,8 @@ function handleFieldReveal(view, state, button) {
     }
 
     if (state.fieldsLeft === 0) {
-        view.smiley.className = 'won';
+        view.smiley.classList.remove('lost');
+        view.smiley.classList.add('won');
         manageMusic(state, 'play', 'win');
         document.body.classList.add('win-bg');
         gameOver(view, state);
@@ -377,7 +381,6 @@ function playEffect(id) {
 }
 
 function manageMusic(state, action, type = 'bg') {
-    const winMusic = document.getElementById('win-music');
     const music_1 = document.getElementById('music-1');
     const music_2 = document.getElementById('music-2');
     const music_3 = document.getElementById('music-3');
@@ -385,8 +388,10 @@ function manageMusic(state, action, type = 'bg') {
     const music_5 = document.getElementById('music-5');
     const music_6 = document.getElementById('music-6');
     const music_7 = document.getElementById('music-7');
-
-    if (winMusic) winMusic.pause();
+    const win_1 = document.getElementById('win-1');
+    const win_2 = document.getElementById('win-2');
+    const win_3 = document.getElementById('win-3');
+    
     if (music_1) music_1.pause();
     if (music_2) music_2.pause();
     if (music_3) music_3.pause();
@@ -394,11 +399,13 @@ function manageMusic(state, action, type = 'bg') {
     if (music_5) music_5.pause();
     if (music_6) music_6.pause();
     if (music_7) music_7.pause();
+    if (win_1) win_1.pause();
+    if (win_2) win_2.pause();
+    if (win_3) win_3.pause();
 
     if (action === 'stop') return;
 
-    const current = (type === 'win') ? winMusic : document.getElementById(state.currentBgMusicId);
-    
+    const current = document.getElementById(type === 'win' ? state.currentWinMusicId : state.currentBgMusicId);    
     const isMuted = document.getElementById('mute-button').classList.contains('muted');
     if (!isMuted && current) {
         current.currentTime = 0;
