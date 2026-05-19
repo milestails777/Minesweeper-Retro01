@@ -116,6 +116,9 @@ function restartGame(view, state) {
     state.musicStarted = false;
     document.getElementById('mute-button').style.display = 'none';
 
+    const volumeContainer = document.getElementById('volume-container'); 
+    if (volumeContainer) volumeContainer.style.display = 'none';
+
     const newState = initGameState({
         width: state.fields[0].length,
         height: state.fields.length,
@@ -132,6 +135,9 @@ function ensureTimerStarted(view, state) {
     }
 
     document.getElementById('mute-button').style.display = 'flex';
+    const volumeContainer = document.getElementById('volume-container');
+    if (volumeContainer) volumeContainer.style.display = 'flex';
+
     if (!state.musicStarted) {
         const bgTracks = ['music-1', 'music-2', 'music-3', 'music-4', 'music-5', 'music-6', 'music-7'];
         const winTracks = ['win-1', 'win-2', 'win-3', 'win-4', 'win-5'];
@@ -158,6 +164,18 @@ function handleGameEvents(view, state) {
         playEffect('click');
         restartGame(view, state);
     });
+
+    const volumeSlider = document.getElementById('volume-slider');
+    if (volumeSlider) {
+        volumeSlider.addEventListener('input', (event) => {
+            const volume = event.target.value;
+            // Динамически меняем громкость у абсолютно всех аудио на странице
+            const allAudio = document.querySelectorAll('audio');
+            allAudio.forEach(audio => {
+                audio.volume = volume;
+            });
+        });
+    }
 
     const startButton = document.querySelector('.start-button');
     if (startButton) {
@@ -329,6 +347,8 @@ function gameOver(view, state) {
 
     if (!isWin) {
         document.getElementById('mute-button').style.display = 'none';
+        const volumeContainer = document.getElementById('volume-container'); // <-- ДОБАВИТЬ
+        if (volumeContainer) volumeContainer.style.display = 'none';
         manageMusic(state, 'stop');
         
         for (const button of view.grid.children) {
@@ -422,6 +442,13 @@ function manageMusic(state, action, type = 'bg') {
     const isMuted = document.getElementById('mute-button').classList.contains('muted');
     if (!isMuted && current) {
         current.currentTime = 0;
+        current.play().catch(() => {});
+
+        const volumeSlider = document.getElementById('volume-slider');
+        if (volumeSlider) {
+            current.volume = volumeSlider.value;
+        }
+        
         current.play().catch(() => {});
     }
 }

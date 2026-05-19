@@ -257,6 +257,23 @@ body.win-bg #timer {
     animation: shake 0.2s ease-in-out;
 }
 
+#volume-container {
+    display: flex;
+    position: fixed;
+    top: 75px;
+    right: 10px;
+    align-items: center;
+    gap: 15px;
+    background: #c0c0c0;
+    padding: 4px 6px;
+    border-left: 2px solid #fff;
+    border-top: 2px solid #fff;
+    border-right: 2px solid #808080;
+    border-bottom: 2px solid #808080;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 15px;
+}
+
 #mute-button {
     display: flex;
     position: fixed;
