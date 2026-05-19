@@ -12,6 +12,7 @@ function initGameState({ width, height, minesCount }) {
         isMuted: false, 
         musicStarted: false,
         minesPlaced: false,
+        currentBgMusicId: undefined,
    };
 
    return state;
@@ -111,7 +112,7 @@ function restartGame(view, state) {
     const resultBg = document.getElementById('game-result-bg');
     if (resultBg) resultBg.classList.remove('shake');
 
-    manageMusic('stop');
+    manageMusic(state, 'stop');
     state.musicStarted = false;
     document.getElementById('mute-button').style.display = 'none';
 
@@ -133,9 +134,13 @@ function ensureTimerStarted(view, state) {
 
     document.getElementById('mute-button').style.display = 'flex';
     if (!state.musicStarted) {
-        manageMusic('play', 'bg');
+        const bgTracks = ['main-music', 'krutoe-audio'];
+        const randomIndex = Math.floor(Math.random() * bgTracks.length);
+        state.currentBgMusicId = bgTracks[randomIndex];
+        manageMusic(state, 'play', 'bg');
         state.musicStarted = true;
     }
+
     state.timerStart = new Date();
     state.timerInterval = setInterval(() => {
         const secondsElapsed = Math.floor(
@@ -243,7 +248,7 @@ function handleFieldReveal(view, state, button) {
                     playEffect('boom');
                 }
                 document.body.classList.add('lost-bg');
-                manageMusic('stop');
+                manageMusic(state, 'stop');
 
                 const window = document.querySelector('.window');
                 const resultBg = document.getElementById('game-result-bg');
@@ -274,7 +279,7 @@ function handleFieldReveal(view, state, button) {
 
     if (state.fieldsLeft === 0) {
         view.smiley.className = 'won';
-        manageMusic('play', 'win');
+        manageMusic(state, 'play', 'win');
         document.body.classList.add('win-bg');
         gameOver(view, state);
     }
@@ -320,7 +325,7 @@ function gameOver(view, state) {
 
     if (!isWin) {
         document.getElementById('mute-button').style.display = 'none';
-        manageMusic('stop');
+        manageMusic(state, 'stop');
     }
 
     for (const button of view.grid.children) {
@@ -367,22 +372,25 @@ function playEffect(id) {
     const audio = document.getElementById(id);
     if (audio) {
         audio.currentTime = 0;
-        audio.play();
+        audio.play().catch(() => {});
     }
 }
 
-function manageMusic(action, type = 'bg') {
-    const mainMusic = document.getElementById('main-music');
+function manageMusic(state, action, type = 'bg') {
     const winMusic = document.getElementById('win-music');
     
-    mainMusic.pause();
-    winMusic.pause();
+    if (winMusic) winMusic.pause();
+    const mainMusic = document.getElementById('main-music');
+    const krutoeAudio = document.getElementById('krutoe-audio');
+    if (mainMusic) mainMusic.pause();
+    if (krutoeAudio) krutoeAudio.pause();
 
     if (action === 'stop') return;
 
-    const current = (type === 'win') ? winMusic : mainMusic;
+    const current = (type === 'win') ? winMusic : document.getElementById(state.currentBgMusicId);
+    
     const isMuted = document.getElementById('mute-button').classList.contains('muted');
-    if (!isMuted) {
+    if (!isMuted && current) {
         current.currentTime = 0;
         current.play().catch(() => {});
     }
@@ -395,19 +403,18 @@ function toggleMute(view, state) {
     
     state.isMuted = !state.isMuted;
 
-if (state.isMuted) {
+    if (state.isMuted) {
         button.classList.replace('unmuted', 'muted');
         text.innerText = 'OFF';
-        manageMusic('stop');
+        manageMusic(state, 'stop');
     } else {
         button.classList.replace('muted', 'unmuted');
         text.innerText = 'ON';
         
         if (isWin) {
-            manageMusic('play', 'win');
-        } 
-        else if (!state.isGameOver && state.musicStarted) {
-            manageMusic('play', 'bg');
+            manageMusic(state, 'play', 'win');
+        } else if (!state.isGameOver && state.musicStarted) {
+            manageMusic(state, 'play', 'bg');
         }
     }   
 }
