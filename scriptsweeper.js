@@ -134,10 +134,11 @@ function ensureTimerStarted(view, state) {
     document.getElementById('mute-button').style.display = 'flex';
     if (!state.musicStarted) {
         const bgTracks = ['music-1', 'music-2', 'music-3', 'music-4', 'music-5', 'music-6', 'music-7'];
-        const winTracks = ['win-1', 'win-2', 'win-3'];
-        const randomIndex = Math.floor(Math.random() * bgTracks.length);
-        state.currentBgMusicId = bgTracks[randomIndex];
-        state.currentWinMusicId = winTracks[randomIndex];
+        const winTracks = ['win-1', 'win-2', 'win-3', 'win-4', 'win-5'];
+        const randomBgIndex = Math.floor(Math.random() * bgTracks.length);
+        const randomWinIndex = Math.floor(Math.random() * winTracks.length);
+        state.currentBgMusicId = bgTracks[randomBgIndex];
+        state.currentWinMusicId = winTracks[randomWinIndex];
         manageMusic(state, 'play', 'bg');
         state.musicStarted = true;
     }
@@ -329,13 +330,22 @@ function gameOver(view, state) {
     if (!isWin) {
         document.getElementById('mute-button').style.display = 'none';
         manageMusic(state, 'stop');
-    }
-
-    for (const button of view.grid.children) {
-        const { x, y } = getButtonPosition(button);
-
-        if (state.fields[y][x] === -1) {
-            revealField(state, button);
+        
+        for (const button of view.grid.children) {
+            const { x, y } = getButtonPosition(button);
+            if (state.fields[y][x] === -1 && !button.classList.contains('exploded')) {
+                button.disabled = true;
+                button.classList.remove('flagged');
+                button.className = 'mine';
+            }
+        }
+    } else {
+        for (const button of view.grid.children) {
+            const { x, y } = getButtonPosition(button);
+            button.disabled = true;
+            if (state.fields[y][x] === -1) {
+                button.classList.add('flagged'); 
+            }
         }
     }
 }
@@ -390,6 +400,8 @@ function manageMusic(state, action, type = 'bg') {
     const win_1 = document.getElementById('win-1');
     const win_2 = document.getElementById('win-2');
     const win_3 = document.getElementById('win-3');
+    const win_4 = document.getElementById('win-4');
+    const win_5 = document.getElementById('win-5');
     
     if (music_1) music_1.pause();
     if (music_2) music_2.pause();
@@ -401,6 +413,8 @@ function manageMusic(state, action, type = 'bg') {
     if (win_1) win_1.pause();
     if (win_2) win_2.pause();
     if (win_3) win_3.pause();
+    if (win_4) win_4.pause();
+    if (win_5) win_5.pause();
 
     if (action === 'stop') return;
 
