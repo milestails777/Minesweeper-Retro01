@@ -168,14 +168,22 @@ function handleGameEvents(view, state) {
     const volumeSlider = document.getElementById('volume-slider');
     if (volumeSlider) {
         volumeSlider.addEventListener('input', (event) => {
-            const volume = event.target.value;
+            const volume = Number(event.target.value);
             const allAudio = document.querySelectorAll('audio');
             allAudio.forEach(audio => {
                 audio.volume = volume;
             });
+
+            const volumeContainer = document.getElementById('volume-container');
+            if (volumeContainer) {
+                if (volume === 0) {
+                    volumeContainer.classList.replace('unsilent', 'silent');
+                } else {
+                    volumeContainer.classList.replace('silent', 'unsilent');
+                }
+            }
         });
     }
-
     const startButton = document.querySelector('.start-button');
     if (startButton) {
         startButton.addEventListener('click', () => playEffect('click'));
@@ -346,7 +354,7 @@ function gameOver(view, state) {
 
     if (!isWin) {
         document.getElementById('mute-button').style.display = 'none';
-        const volumeContainer = document.getElementById('volume-container'); // <-- ДОБАВИТЬ
+        const volumeContainer = document.getElementById('volume-container');
         if (volumeContainer) volumeContainer.style.display = 'none';
         manageMusic(state, 'stop');
         
@@ -456,25 +464,22 @@ function toggleMute(view, state) {
     const button = document.getElementById('mute-button');
     const text = button.querySelector('.mute-text');
     const isWin = view.smiley.classList.contains('won');
-    
-    state.isMuted = !state.isMuted;
-
-    
     const volumeContainer = document.querySelector('#volume-container');
+    const volumeSlider = document.getElementById('volume-slider');
 
+    state.isMuted = !state.isMuted;
+    
     if (state.isMuted) {
         button.classList.replace('unmuted', 'muted');
         text.innerText = 'OFF';
-        
-        
+
         if (volumeContainer) volumeContainer.style.display = 'none'; 
-        
+
         manageMusic(state, 'stop');
     } else {
         button.classList.replace('muted', 'unmuted');
         text.innerText = 'ON';
-        
-        
+
         if (volumeContainer) volumeContainer.style.display = 'flex'; 
         
         if (isWin) {

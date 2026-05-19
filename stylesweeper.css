@@ -257,6 +257,22 @@ body.win-bg #timer {
     animation: shake 0.2s ease-in-out;
 }
 
+#mute-button {
+    display: flex;
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    align-items: center;
+    gap: 15px;
+    background: #c0c0c3;
+    border: 2px solid;
+    border-color: #fff #808080 #808080 #fff;
+    padding: 4px 4px;
+    font-family: inherit;
+    cursor: pointer;
+    outline: none;
+}
+
 #volume-container {
     display: flex;
     position: fixed;
@@ -274,22 +290,6 @@ body.win-bg #timer {
     font-size: 15px;
 }
 
-#mute-button {
-    display: flex;
-    position: fixed;
-    top: 10px;
-    right: 10px;
-    align-items: center;
-    gap: 15px;
-    background: #c0c0c3;
-    border: 2px solid;
-    border-color: #fff #808080 #808080 #fff;
-    padding: 4px 4px;
-    font-family: inherit;
-    cursor: pointer;
-    outline: none;
-}
-
 #mute-button:active {
     border-color: #808080 #fff #fff #808080;
 }
@@ -297,6 +297,14 @@ body.win-bg #timer {
 #mute-button .mute-icon {
     width: 36px;
     height: 36px;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+#volume-container .volume-icon {
+    width: 32px;
+    height: 32px;
     background-size: contain;
     background-repeat: no-repeat;
     background-position: center;
@@ -314,6 +322,15 @@ body.win-bg #timer {
 #mute-button.muted .mute-icon {
     background-image: url('./assets/music-off.png');
 }
+
+#volume-container.unsilent .volume-icon {
+    background-image: url('./assets/volume-on.png');
+}
+
+#volume-container.silent .volume-icon {
+    background-image: url('./assets/volume-off.png');
+}
+
 
 @keyframes secretkaFade {
     0% { opacity: 0; } 20% { opacity: 1; } 80% { opacity: 1; } 100% { opacity: 0; }
