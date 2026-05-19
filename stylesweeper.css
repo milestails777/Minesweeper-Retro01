@@ -416,5 +416,6 @@ body.win-bg #timer {
     width: auto;
     top: 20px;
     left: 10px;
+    z-index: -1;
     image-rendering: pixelated;
 }
