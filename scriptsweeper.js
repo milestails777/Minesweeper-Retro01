@@ -106,8 +106,11 @@ function initView(view, state) {
 
 function restartGame(view, state) {
     clearInterval(state.timerInterval);
-    document.body.classList.remove('lost-bg');
-    document.body.classList.remove('win-bg');
+    document.body.classList.remove('lost-bg', 'win-bg');
+
+    const resultBg = document.getElementById('game-result-bg');
+    if (resultBg) resultBg.classList.remove('shake');
+
     manageMusic('stop');
     state.musicStarted = false;
     document.getElementById('mute-button').style.display = 'none';
@@ -241,10 +244,22 @@ function handleFieldReveal(view, state, button) {
                 }
                 document.body.classList.add('lost-bg');
                 manageMusic('stop');
+
                 const window = document.querySelector('.window');
-                window.classList.remove('shake');
-                void window.offsetWidth;
-                window.classList.add('shake');
+                const resultBg = document.getElementById('game-result-bg');
+
+                if (window) {
+                    window.classList.remove('shake');
+                    void window.offsetWidth;
+                    window.classList.add('shake');
+                }
+
+                if (resultBg) {
+                    resultBg.classList.remove('shake');
+                    void resultBg.offsetWidth;
+                    resultBg.classList.add('shake');
+                }
+                
                 button.classList.add('exploded');
                 view.smiley.className = 'lost';
                 gameOver(view, state);

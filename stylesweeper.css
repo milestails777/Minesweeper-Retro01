@@ -38,6 +38,27 @@ body.win-bg {
     animation: gradientBG 5s ease infinite;
 }
 
+#game-result-bg {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: -1;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: auto;
+    pointer-events: none;
+}
+
+body.lost-bg #game-result-bg {
+    background-image: url('./assets/mines-bg.png');
+}
+
+body.win-bg #game-result-bg {
+    background-image: url('./assets/smiley-bg.png');
+}
+
 body.lost-bg #mines-left,
 body.lost-bg #timer {
     color: #ff0000;
@@ -384,5 +405,16 @@ body.win-bg #timer {
     height: 24px;
     width: auto;
     margin-left: auto;
+    image-rendering: pixelated;
+}
+
+.icons {
+    display: flex;
+    position: fixed;
+    align-items: center;
+    height: 320px;
+    width: auto;
+    top: 20px;
+    left: 10px;
     image-rendering: pixelated;
 }
