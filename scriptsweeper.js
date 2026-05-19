@@ -169,7 +169,6 @@ function handleGameEvents(view, state) {
     if (volumeSlider) {
         volumeSlider.addEventListener('input', (event) => {
             const volume = event.target.value;
-            // Динамически меняем громкость у абсолютно всех аудио на странице
             const allAudio = document.querySelectorAll('audio');
             allAudio.forEach(audio => {
                 audio.volume = volume;
@@ -460,17 +459,28 @@ function toggleMute(view, state) {
     
     state.isMuted = !state.isMuted;
 
+    
+    const volumeContainer = document.querySelector('#volume-container');
+
     if (state.isMuted) {
         button.classList.replace('unmuted', 'muted');
         text.innerText = 'OFF';
+        
+        
+        if (volumeContainer) volumeContainer.style.display = 'none'; 
+        
         manageMusic(state, 'stop');
     } else {
         button.classList.replace('muted', 'unmuted');
         text.innerText = 'ON';
         
+        
+        if (volumeContainer) volumeContainer.style.display = 'flex'; 
+        
         if (isWin) {
             manageMusic(state, 'play', 'win');
-        } else if (!state.isGameOver && state.musicStarted) {
+        } 
+        else if (!state.isGameOver && state.musicStarted) {
             manageMusic(state, 'play', 'bg');
         }
     }   
