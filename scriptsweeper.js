@@ -83,7 +83,6 @@ function createFieldButtons(view, state) {
 
     view.grid.style.gridTemplateColumns = `repeat(${width}, 1fr)`;
     view.grid.style.gridTemplateRows = `repeat(${height}, 1fr)`;
-
     view.grid.append(fragment);
 }
 
