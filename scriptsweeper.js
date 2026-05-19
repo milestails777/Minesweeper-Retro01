@@ -134,7 +134,7 @@ function ensureTimerStarted(view, state) {
 
     document.getElementById('mute-button').style.display = 'flex';
     if (!state.musicStarted) {
-        const bgTracks = ['main-music', 'krutoe-audio'];
+        const bgTracks = ['music-1', 'music-2', 'music-3', 'music-4', 'music-5', 'music-6', 'music-7'];
         const randomIndex = Math.floor(Math.random() * bgTracks.length);
         state.currentBgMusicId = bgTracks[randomIndex];
         manageMusic(state, 'play', 'bg');
@@ -378,12 +378,22 @@ function playEffect(id) {
 
 function manageMusic(state, action, type = 'bg') {
     const winMusic = document.getElementById('win-music');
-    
+    const music_1 = document.getElementById('music-1');
+    const music_2 = document.getElementById('music-2');
+    const music_3 = document.getElementById('music-3');
+    const music_4 = document.getElementById('music-4');
+    const music_5 = document.getElementById('music-5');
+    const music_6 = document.getElementById('music-6');
+    const music_7 = document.getElementById('music-7');
+
     if (winMusic) winMusic.pause();
-    const mainMusic = document.getElementById('main-music');
-    const krutoeAudio = document.getElementById('krutoe-audio');
-    if (mainMusic) mainMusic.pause();
-    if (krutoeAudio) krutoeAudio.pause();
+    if (music_1) music_1.pause();
+    if (music_2) music_2.pause();
+    if (music_3) music_3.pause();
+    if (music_4) music_4.pause();
+    if (music_5) music_5.pause();
+    if (music_6) music_6.pause();
+    if (music_7) music_7.pause();
 
     if (action === 'stop') return;
 
