@@ -119,6 +119,7 @@ function restartGame(view, state) {
     const volumeContainer = document.getElementById('volume-container'); 
     if (volumeContainer) volumeContainer.style.display = 'none';
 
+    const savedMuteState = state.isMuted;
     const newState = initGameState({
         width: state.fields[0].length,
         height: state.fields.length,
@@ -126,6 +127,7 @@ function restartGame(view, state) {
     });
 
     Object.assign(state, newState);
+    state.isMuted = savedMuteState;
     initView(view, state);
 }
 
@@ -134,9 +136,30 @@ function ensureTimerStarted(view, state) {
         return;
     }
 
-    document.getElementById('mute-button').style.display = 'flex';
+    const muteButton = document.getElementById('mute-button');
+    if (muteButton) {
+        muteButton.style.display = 'flex';
+        const text = muteButton.querySelector('.mute-text');
+        
+        if (state.isMuted) {
+            muteButton.classList.remove('unmuted');
+            muteButton.classList.add('muted');
+            if (text) text.innerText = 'OFF';
+        } else {
+            muteButton.classList.remove('muted');
+            muteButton.classList.add('unmuted');
+            if (text) text.innerText = 'ON';
+        }
+    }
+
     const volumeContainer = document.getElementById('volume-container');
-    if (volumeContainer) volumeContainer.style.display = 'flex';
+    if (volumeContainer) {
+        if (!state.isMuted) {
+            volumeContainer.style.display = 'flex';
+        } else {
+            volumeContainer.style.display = 'none';
+        }
+    }
 
     if (!state.musicStarted) {
         const bgTracks = ['music-1', 'music-2', 'music-3', 'music-4', 'music-5', 'music-6', 'music-7'];
@@ -169,8 +192,8 @@ function handleGameEvents(view, state) {
     if (volumeSlider) {
         volumeSlider.addEventListener('input', (event) => {
             const volume = Number(event.target.value);
-            const allAudio = document.querySelectorAll('audio');
-            allAudio.forEach(audio => {
+            const musicTracks = document.querySelectorAll('audio[id^="music-"], audio[id^="win-"]');
+            musicTracks.forEach(audio => {
                 audio.volume = volume;
             });
 
