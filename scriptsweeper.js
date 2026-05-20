@@ -11,6 +11,7 @@ function initGameState({ width, height, minesCount }) {
         timerInterval: undefined,
         isMuted: false, 
         musicStarted: false,
+        isStopped: true,
         minesPlaced: false,
         currentBgMusicId: undefined,
         currentWinMusicId: undefined,
@@ -419,29 +420,35 @@ function manageMusic(state, action, type = 'bg') {
     const win_4 = document.getElementById('win-4');
     const win_5 = document.getElementById('win-5');
     
-    if (music_1) music_1.pause();
-    if (music_2) music_2.pause();
-    if (music_3) music_3.pause();
-    if (music_4) music_4.pause();
-    if (music_5) music_5.pause();
-    if (music_6) music_6.pause();
-    if (music_7) music_7.pause();
-    if (win_1) win_1.pause();
-    if (win_2) win_2.pause();
-    if (win_3) win_3.pause();
-    if (win_4) win_4.pause();
-    if (win_5) win_5.pause();
+    if (action !== 'stop') {
+        const allAudio = [music_1, music_2, music_3, music_4, music_5, music_6, music_7, win_1, win_2, win_3, win_4, win_5];
+        allAudio.forEach(audio => {
+            if (audio) audio.pause();
+        });
+    }
 
     if (action === 'stop') {
         state.isPlaying = false;
+        state.isStopped = true;
+
+        const allAudio = [music_1, music_2, music_3, music_4, music_5, music_6, music_7, win_1, win_2, win_3, win_4, win_5];
+        allAudio.forEach(audio => {
+            if (audio) {
+                audio.pause();
+                audio.currentTime = 0;
+            }
+        });
+
+        updatePlayerDisplay(state);
         return;
     }
 
-    const current = document.getElementById(type === 'win' ? state.currentWinMusicId : state.currentBgMusicId);    
-    
+    const targetId = type === 'win' ? state.currentWinMusicId : state.currentBgMusicId;
+    const current = document.getElementById(targetId);    
     
     if (!state.isMuted && current) {
-        current.currentTime = 0;
+        state.isStopped = false;
+
         const volumeSlider = document.getElementById('volume-slider');
         if (volumeSlider) {
             current.volume = Number(volumeSlider.value);
@@ -484,8 +491,10 @@ function updatePlayerDisplay(state) {
         trackInfo.innerText = `TRK-${paddedIndex} PLAY`;
     } else if (state.isMuted && state.isPlaying) {
         trackInfo.innerText = `TRK-${paddedIndex} MUTE`;
-    } else {
+    } else if (state.isStopped) {
         trackInfo.innerText = `TRK-${paddedIndex} STOP`;
+    } else {
+        trackInfo.innerText = `TRK-${paddedIndex} PAUSE`;
     }
 
     if (btnPlay) {
@@ -512,7 +521,7 @@ function initMediaPlayer(state) {
 
     if (!state.currentBgMusicId) state.currentBgMusicId = bgTracks[0];
     
-    setInterval(() => {
+setInterval(() => {
         const timeInfo = document.getElementById('player-time-info');
         if (!timeInfo) return;
 
@@ -523,7 +532,9 @@ function initMediaPlayer(state) {
             currentAudio = document.getElementById(state.currentBgMusicId);
         }
 
-        if (currentAudio && state.isPlaying && !currentAudio.paused) {
+        if (state.isStopped) {
+            timeInfo.innerText = '00:00';
+        } else if (currentAudio) {
             const mins = String(Math.floor(currentAudio.currentTime / 60)).padStart(2, '0');
             const secs = String(Math.floor(currentAudio.currentTime % 60)).padStart(2, '0');
             timeInfo.innerText = `${mins}:${secs}`;
@@ -557,6 +568,10 @@ function initMediaPlayer(state) {
     btnNext.addEventListener('click', () => {
         playEffect('click');
         const isWin = document.body.classList.contains('win-bg');
+        
+        let currentAudio = document.getElementById(isWin ? state.currentWinMusicId : state.currentBgMusicId);
+        if (currentAudio) currentAudio.currentTime = 0;
+
         if (isWin) {
             const winTracks = ['win-1', 'win-2', 'win-3', 'win-4', 'win-5'];
             let idx = winTracks.indexOf(state.currentWinMusicId);
@@ -574,6 +589,10 @@ function initMediaPlayer(state) {
     btnPrev.addEventListener('click', () => {
         playEffect('click');
         const isWin = document.body.classList.contains('win-bg');
+        
+        let currentAudio = document.getElementById(isWin ? state.currentWinMusicId : state.currentBgMusicId);
+        if (currentAudio) currentAudio.currentTime = 0;
+
         if (isWin) {
             const winTracks = ['win-1', 'win-2', 'win-3', 'win-4', 'win-5'];
             let idx = winTracks.indexOf(state.currentWinMusicId);
@@ -587,7 +606,7 @@ function initMediaPlayer(state) {
             manageMusic(state, 'play', 'bg');
         }
     });
-    
+
     muteBtn.addEventListener('click', () => {
         playEffect('click');
         state.isMuted = !state.isMuted;
