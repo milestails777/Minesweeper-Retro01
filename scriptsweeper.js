@@ -107,33 +107,30 @@ function initView(view, state) {
 }
 
 function restartGame(view, state) {
-    clearInterval(state.timerInterval);
-    document.body.classList.remove('lost-bg', 'win-bg');
+    clearInterval(state.timerInterval); 
+    document.body.classList.remove('lost-bg', 'win-bg'); 
 
-    const resultBg = document.getElementById('game-result-bg');
-    if (resultBg) resultBg.classList.remove('shake');
+    const resultBg = document.getElementById('game-result-bg'); 
+    if (resultBg) resultBg.classList.remove('shake'); 
 
-    if (state.isPlaying && !state.isMuted) {
-        manageMusic(state, 'play', 'bg');
-    } else {
-        manageMusic(state, 'stop');
-    }
-    state.musicStarted = false;
+    manageMusic(state, 'stop'); 
+    state.musicStarted = false; 
 
-    const savedMuteState = state.isMuted;
-    const savedBgMusicId = state.currentBgMusicId;
+    const savedMuteState = state.isMuted; 
+    const savedBgMusicId = state.currentBgMusicId; 
 
-    const newState = initGameState({
-        width: state.fields[0].length,
-        height: state.fields.length,
-        minesCount: state.minesCount,
-    });
+    const newState = initGameState({ 
+        width: state.fields[0].length, 
+        height: state.fields.length, 
+        minesCount: state.minesCount, 
+    }); 
 
     Object.assign(state, newState);
     state.isMuted = savedMuteState;
-    initView(view, state);
+    state.currentBgMusicId = savedBgMusicId; 
 
-    updatePlayerDisplay(state);
+    initView(view, state); 
+    updatePlayerDisplay(state); 
 }
 
 function ensureTimerStarted(view, state) {
