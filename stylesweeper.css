@@ -164,7 +164,7 @@ body.win-bg #timer {
 }
 
 #smiley.lost::after { background-image: url("./assets/death.png"); }
-#smiley.won::after { background-image: url("./assets/durr.png"); }
+#smiley.won::after { background-image: url("./assets/win.png"); }
 
 #grid {
     display: inline-grid;
