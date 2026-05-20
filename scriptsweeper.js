@@ -473,28 +473,36 @@ function updatePlayerDisplay(state) {
     const trackInfo = document.getElementById('player-track-info');
     const btnPlay = document.getElementById('btn-play');
     const muteBtn = document.getElementById('player-mute-btn');
+
     if (!trackInfo) return;
 
-    const bgTracks = ['music-1', 'music-2', 'music-3', 'music-4', 'music-5', 'music-6', 'music-7'];
-    if (!state.currentBgMusicId) state.currentBgMusicId = bgTracks[0];
+    const isWinActive = document.body.classList.contains('win-bg');
 
-    const trackIndex = bgTracks.indexOf(state.currentBgMusicId) + 1;
-    const paddedIndex = String(trackIndex).padStart(2, '0');
-
-    const isWinActive = document.body.classList.contains('win-bg') && state.isPlaying;
+    let paddedIndex = '01';
+    let prefix = 'TRK';
 
     if (isWinActive) {
         const winTracks = ['win-1', 'win-2', 'win-3', 'win-4', 'win-5'];
+        if (!state.currentWinMusicId) state.currentWinMusicId = winTracks[0];
         const winIndex = winTracks.indexOf(state.currentWinMusicId) + 1;
-        trackInfo.innerText = `WIN-${String(winIndex).padStart(2, '0')} PLAY`;
-    } else if (state.isPlaying && !state.isMuted) {
-        trackInfo.innerText = `TRK-${paddedIndex} PLAY`;
-    } else if (state.isMuted && state.isPlaying) {
-        trackInfo.innerText = `TRK-${paddedIndex} MUTE`;
-    } else if (state.isStopped) {
-        trackInfo.innerText = `TRK-${paddedIndex} STOP`;
+        paddedIndex = String(winIndex).padStart(2, '0');
+        prefix = 'WIN';
     } else {
-        trackInfo.innerText = `TRK-${paddedIndex} PAUSE`;
+        const bgTracks = ['music-1', 'music-2', 'music-3', 'music-4', 'music-5', 'music-6', 'music-7'];
+        if (!state.currentBgMusicId) state.currentBgMusicId = bgTracks[0];
+        const trackIndex = bgTracks.indexOf(state.currentBgMusicId) + 1;
+        paddedIndex = String(trackIndex).padStart(2, '0');
+        prefix = 'TRK';
+    }
+
+    if (state.isPlaying && !state.isMuted) {
+        trackInfo.innerText = `${prefix}-${paddedIndex} PLAY`;
+    } else if (state.isMuted && state.isPlaying) {
+        trackInfo.innerText = `${prefix}-${paddedIndex} MUTE`;
+    } else if (state.isStopped) {
+        trackInfo.innerText = `${prefix}-${paddedIndex} STOP`;
+    } else {
+        trackInfo.innerText = `${prefix}-${paddedIndex} PAUSE`; 
     }
 
     if (btnPlay) {
@@ -521,7 +529,7 @@ function initMediaPlayer(state) {
 
     if (!state.currentBgMusicId) state.currentBgMusicId = bgTracks[0];
     
-setInterval(() => {
+    setInterval(() => {
         const timeInfo = document.getElementById('player-time-info');
         if (!timeInfo) return;
 
