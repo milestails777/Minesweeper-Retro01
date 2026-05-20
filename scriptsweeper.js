@@ -737,6 +737,13 @@ function initDragAndDrop() {
     const gameWindow = document.querySelector('.window:not(.media-player-window)');
     const playerWindow = document.querySelector('.media-player-window');
 
+    function bringToFront(element) {
+        topZIndex++;
+        element.style.zIndex = topZIndex;
+    }
+
+let topZIndex = 20;
+
     function centerWindowsInitially() {
         if (!gameWindow || !playerWindow) return;
 
@@ -760,6 +767,10 @@ function initDragAndDrop() {
         let startX, startY, initialLeft, initialTop;
 
         titleBar.style.cursor = 'move';
+        
+        element.addEventListener('mousedown', () => {
+            bringToFront(element);
+        });
         
         titleBar.addEventListener('mousedown', (e) => {
             if (e.target.tagName === 'BUTTON' || e.target.closest('button')) return;
