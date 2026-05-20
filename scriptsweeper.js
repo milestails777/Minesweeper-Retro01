@@ -736,13 +736,12 @@ function initPlayerWindowControls() {
 function initDragAndDrop() {
     const gameWindow = document.querySelector('.window:not(.media-player-window)');
     const playerWindow = document.querySelector('.media-player-window');
-
+    let topZIndex = 20;
+    
     function bringToFront(element) {
         topZIndex++;
         element.style.zIndex = topZIndex;
     }
-
-let topZIndex = 20;
 
     function centerWindowsInitially() {
         if (!gameWindow || !playerWindow) return;
