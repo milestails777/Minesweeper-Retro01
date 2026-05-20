@@ -16,16 +16,13 @@ body {
     height: 100vh;
     padding: 0;
     margin: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
     background: linear-gradient(-45deg, #00feef, #09ebee, #19ceeb, #28acea, #388ee9, #2d76e0);
     background-size: 400% 400%;
     animation: gradientBG 20s ease infinite;
     font-family: 'Press Start 2P', monospace;
     box-sizing: border-box;
-    flex-direction: column;
-    gap: 10px;
+    position: relative;
+    overflow: hidden;
 }
 
 body.lost-bg {
@@ -75,10 +72,7 @@ body.win-bg #timer {
 }
 
 .window {
-    display: inline-flex;
-    justify-content: center;
-    position: relative;
-    flex-direction: column;
+    position: absolute;
     background: #c0c0c3;
     padding: 3px;
     box-shadow: inset -1px -1px #0a0a0a, 
@@ -259,14 +253,11 @@ body.win-bg #timer {
     animation: shake 0.2s ease-in-out;
 }
 
-
-
 .media-player-window {
-    margin-top: 15px;
     width: 284px; 
     user-select: none;
+    z-index: 10;
 }
-
 
 .player-container {
     display: flex;
@@ -274,7 +265,6 @@ body.win-bg #timer {
     gap: 8px;
     width: 100%;
 }
-
 
 .player-display {
     display: flex;
@@ -300,7 +290,6 @@ body.win-bg .player-display {
     text-shadow: 0 0 8px rgba(226, 241, 5, 0.7);
 }
 
-
 .player-controls {
     display: flex;
     justify-content: space-between;
@@ -312,7 +301,7 @@ body.win-bg .player-display {
     height: 30px;
     background: #c0c0c3;
     font-family: inherit;
-    font-size: 12px;
+    font-size: 14px;
     color: #000;
     border: 2px solid;
     border-color: #fff #808080 #808080 #fff;
@@ -327,7 +316,6 @@ body.win-bg .player-display {
     border-color: #808080 #fff #fff #808080;
 }
 
-
 .player-audio-panel {
     display: flex;
     align-items: center;
@@ -335,7 +323,6 @@ body.win-bg .player-display {
     justify-content: space-between;
     width: 100%;
 }
-
 
 #player-mute-btn {
     display: flex;
@@ -376,7 +363,6 @@ body.win-bg .player-display {
     background-image: url('./assets/music-off.png');
 }
 
-
 #player-volume-container {
     display: flex;
     align-items: center;
@@ -384,7 +370,7 @@ body.win-bg .player-display {
     flex-grow: 1;
     background: #c0c0c0;
     padding: 4px 8px;
-    box-shadow: inset -1px -1px #0a0a0a, 
+    box-shadow: inset -1px -1px #808080, 
                 inset 1px 1px #dfdfdf, 
                 inset -2px -2px #808080, 
                 inset 2px 2px #ffffff;
@@ -407,7 +393,6 @@ body.win-bg .player-display {
 #player-volume-container.silent .volume-icon {
     background-image: url('./assets/volume-off.png');
 }
-
 
 #volume-slider {
     -webkit-appearance: none;

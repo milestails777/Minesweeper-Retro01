@@ -260,15 +260,14 @@ function handleFieldReveal(view, state, button) {
                 document.body.classList.add('lost-bg');
                 manageMusic(state, 'stop');
 
-                const windowEl = document.querySelector('.window');
+                const windowElement = document.querySelector('.window');
                 const resultBg = document.getElementById('game-result-bg');
-                // Используем querySelector, чтобы правильно найти плеер по классу
                 const player = document.querySelector('.media-player-window'); 
 
-                if (windowEl) {
-                    windowEl.classList.remove('shake');
-                    void windowEl.offsetWidth; // Триггер перерисовки для перезапуска анимации
-                    windowEl.classList.add('shake');
+                if (windowElement) {
+                    windowElement.classList.remove('shake');
+                    void windowElement.offsetWidth;
+                    windowElement.classList.add('shake');
                 }
 
                 if (resultBg) {
@@ -277,7 +276,6 @@ function handleFieldReveal(view, state, button) {
                     resultBg.classList.add('shake');
                 }
 
-                // Добавляем тряску для плеера
                 if (player) {
                     player.classList.remove('shake');
                     void player.offsetWidth;
@@ -500,7 +498,6 @@ function updatePlayerDisplay(state) {
     }
 }
 
-
 function initMediaPlayer(state) {
     const bgTracks = ['music-1', 'music-2', 'music-3', 'music-4', 'music-5', 'music-6', 'music-7'];
     state.isPlaying = false; 
@@ -514,7 +511,6 @@ function initMediaPlayer(state) {
     const volumeContainer = document.getElementById('player-volume-container');
 
     if (!state.currentBgMusicId) state.currentBgMusicId = bgTracks[0];
-
     
     setInterval(() => {
         const timeInfo = document.getElementById('player-time-info');
@@ -536,7 +532,6 @@ function initMediaPlayer(state) {
         }
     }, 250);
 
-    
     btnPlay.addEventListener('click', () => {
         playEffect('click');
         if (state.isPlaying) {
@@ -553,14 +548,12 @@ function initMediaPlayer(state) {
             manageMusic(state, 'play', isWin ? 'win' : 'bg');
         }
     });
-
     
     btnStop.addEventListener('click', () => {
         playEffect('click');
         manageMusic(state, 'stop');
     });
 
-    
     btnNext.addEventListener('click', () => {
         playEffect('click');
         const isWin = document.body.classList.contains('win-bg');
@@ -578,7 +571,6 @@ function initMediaPlayer(state) {
         }
     });
 
-    
     btnPrev.addEventListener('click', () => {
         playEffect('click');
         const isWin = document.body.classList.contains('win-bg');
@@ -595,7 +587,6 @@ function initMediaPlayer(state) {
             manageMusic(state, 'play', 'bg');
         }
     });
-
     
     muteBtn.addEventListener('click', () => {
         playEffect('click');
@@ -615,7 +606,6 @@ function initMediaPlayer(state) {
         
         updatePlayerDisplay(state);
     });
-
     
     if (volumeSlider) {
         volumeSlider.addEventListener('input', (event) => {
@@ -658,11 +648,8 @@ function initPlayerWindowControls() {
     const playerWin = document.getElementById('media-player'); 
     if (!playerWin) return;
 
-    
     const titleBar = playerWin.querySelector('.title-bar');
-    
     const minimizeBtn = document.getElementById('btn-player-minimize');
-    
     const playerBody = playerWin.querySelector('.window-body');
 
     
@@ -678,7 +665,6 @@ function initPlayerWindowControls() {
         });
     }
 
-    
     if (!titleBar) return;
 
     let isDragging = false;
@@ -692,7 +678,6 @@ function initPlayerWindowControls() {
         startX = e.clientX;
         startY = e.clientY;
 
-        
         const rect = playerWin.getBoundingClientRect();
         initialLeft = rect.left;
         initialTop = rect.top;
@@ -724,44 +709,49 @@ function initPlayerWindowControls() {
 }
 
 function initDragAndDrop() {
-    
-    function setupElementDrag(selector) {
-        const windowEl = document.querySelector(selector);
-        if (!windowEl) return;
+    const gameWindow = document.querySelector('.window:not(.media-player-window)');
+    const playerWindow = document.querySelector('.media-player-window');
 
-        
-        const titleBar = windowEl.querySelector('.title-bar') || windowEl;
-        
+    function centerWindowsInitially() {
+        if (!gameWindow || !playerWindow) return;
+
+        const gameLeft = (window.innerWidth - gameWindow.offsetWidth) / 2;
+        const gameTop = (window.innerHeight - (gameWindow.offsetHeight + playerWindow.offsetHeight + 10)) / 2;
+
+        gameWindow.style.left = gameLeft + 'px';
+        gameWindow.style.top = gameTop + 'px';
+        playerWindow.style.left = ((window.innerWidth - playerWindow.offsetWidth) / 2) + 'px';
+        playerWindow.style.top = (gameTop + gameWindow.offsetHeight + 10) + 'px';
+    }
+
+    centerWindowsInitially();
+    window.addEventListener('resize', centerWindowsInitially);
+
+    function setupElementDrag(element) {
+        if (!element) return;
+
+        const titleBar = element.querySelector('.title-bar') || element;
         let isDragging = false;
-        let startX, startY;
-        let initialLeft, initialTop;
+        let startX, startY, initialLeft, initialTop;
 
         titleBar.style.cursor = 'move';
-
+        
         titleBar.addEventListener('mousedown', (e) => {
-            
+            if (e.target.tagName === 'BUTTON' || e.target.closest('button')) return;
             if (e.button !== 0) return;
 
+            window.removeEventListener('resize', centerWindowsInitially);
+
             isDragging = true;
-            const rect = windowEl.getBoundingClientRect();
-
             
-            if (windowEl.style.position !== 'absolute') {
-                windowEl.style.position = 'absolute';
-                windowEl.style.left = rect.left + 'px';
-                windowEl.style.top = rect.top + 'px';
-                windowEl.style.margin = '0'; 
-            }
-
-            initialLeft = parseFloat(windowEl.style.left) || rect.left;
-            initialTop = parseFloat(windowEl.style.top) || rect.top;
+            initialLeft = element.offsetLeft;
+            initialTop = element.offsetTop;
 
             startX = e.clientX;
             startY = e.clientY;
 
             document.addEventListener('mousemove', onMouseMove);
             document.addEventListener('mouseup', onMouseUp);
-
             e.preventDefault();
         });
 
@@ -771,8 +761,8 @@ function initDragAndDrop() {
             const dx = e.clientX - startX;
             const dy = e.clientY - startY;
 
-            windowEl.style.left = (initialLeft + dx) + 'px';
-            windowEl.style.top = (initialTop + dy) + 'px';
+            element.style.left = (initialLeft + dx) + 'px';
+            element.style.top = (initialTop + dy) + 'px';
         }
 
         function onMouseUp() {
@@ -782,11 +772,8 @@ function initDragAndDrop() {
         }
     }
 
-    
-    setupElementDrag('.window');
-    
-    
-    setupElementDrag('.media-player-window');
+    setupElementDrag(gameWindow);
+    setupElementDrag(playerWindow);
 }
 
 function main() {
@@ -807,11 +794,8 @@ function main() {
     initView(view, state);
     handleGameEvents(view, state);
     initTaskbarClock();
-    
-    initMediaPlayer(state); 
-
+    initMediaPlayer(state);
     initPlayerWindowControls();
-
     initDragAndDrop();
     console.log(state);
 }
