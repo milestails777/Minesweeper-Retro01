@@ -112,14 +112,16 @@ function restartGame(view, state) {
     const resultBg = document.getElementById('game-result-bg');
     if (resultBg) resultBg.classList.remove('shake');
 
-    manageMusic(state, 'stop');
+    if (state.isPlaying && !state.isMuted) {
+        manageMusic(state, 'play', 'bg');
+    } else {
+        manageMusic(state, 'stop');
+    }
     state.musicStarted = false;
-    document.getElementById('mute-button').style.display = 'none';
-
-    const volumeContainer = document.getElementById('volume-container'); 
-    if (volumeContainer) volumeContainer.style.display = 'none';
 
     const savedMuteState = state.isMuted;
+    const savedBgMusicId = state.currentBgMusicId;
+
     const newState = initGameState({
         width: state.fields[0].length,
         height: state.fields.length,
@@ -129,36 +131,13 @@ function restartGame(view, state) {
     Object.assign(state, newState);
     state.isMuted = savedMuteState;
     initView(view, state);
+
+    updatePlayerDisplay(state);
 }
 
 function ensureTimerStarted(view, state) {
     if (state.timerInterval) {
         return;
-    }
-
-    const muteButton = document.getElementById('mute-button');
-    if (muteButton) {
-        muteButton.style.display = 'flex';
-        const text = muteButton.querySelector('.mute-text');
-        
-        if (state.isMuted) {
-            muteButton.classList.remove('unmuted');
-            muteButton.classList.add('muted');
-            if (text) text.innerText = 'OFF';
-        } else {
-            muteButton.classList.remove('muted');
-            muteButton.classList.add('unmuted');
-            if (text) text.innerText = 'ON';
-        }
-    }
-
-    const volumeContainer = document.getElementById('volume-container');
-    if (volumeContainer) {
-        if (!state.isMuted) {
-            volumeContainer.style.display = 'flex';
-        } else {
-            volumeContainer.style.display = 'none';
-        }
     }
 
     if (!state.musicStarted) {
@@ -182,31 +161,12 @@ function ensureTimerStarted(view, state) {
 }
 
 function handleGameEvents(view, state) {
-    document.getElementById('mute-button').addEventListener('click', () => toggleMute(view, state));
+    
     view.smiley.addEventListener('click', () => {
         playEffect('click');
         restartGame(view, state);
     });
 
-    const volumeSlider = document.getElementById('volume-slider');
-    if (volumeSlider) {
-        volumeSlider.addEventListener('input', (event) => {
-            const volume = Number(event.target.value);
-            const musicTracks = document.querySelectorAll('audio[id^="music-"], audio[id^="win-"]');
-            musicTracks.forEach(audio => {
-                audio.volume = volume;
-            });
-
-            const volumeContainer = document.getElementById('volume-container');
-            if (volumeContainer) {
-                if (volume === 0) {
-                    volumeContainer.classList.replace('unsilent', 'silent');
-                } else {
-                    volumeContainer.classList.replace('silent', 'unsilent');
-                }
-            }
-        });
-    }
     const startButton = document.querySelector('.start-button');
     if (startButton) {
         startButton.addEventListener('click', () => playEffect('click'));
@@ -300,19 +260,28 @@ function handleFieldReveal(view, state, button) {
                 document.body.classList.add('lost-bg');
                 manageMusic(state, 'stop');
 
-                const window = document.querySelector('.window');
+                const windowEl = document.querySelector('.window');
                 const resultBg = document.getElementById('game-result-bg');
+                // Используем querySelector, чтобы правильно найти плеер по классу
+                const player = document.querySelector('.media-player-window'); 
 
-                if (window) {
-                    window.classList.remove('shake');
-                    void window.offsetWidth;
-                    window.classList.add('shake');
+                if (windowEl) {
+                    windowEl.classList.remove('shake');
+                    void windowEl.offsetWidth; // Триггер перерисовки для перезапуска анимации
+                    windowEl.classList.add('shake');
                 }
 
                 if (resultBg) {
                     resultBg.classList.remove('shake');
                     void resultBg.offsetWidth;
                     resultBg.classList.add('shake');
+                }
+
+                // Добавляем тряску для плеера
+                if (player) {
+                    player.classList.remove('shake');
+                    void player.offsetWidth;
+                    player.classList.add('shake');
                 }
                 
                 button.classList.add('exploded');
@@ -376,10 +345,7 @@ function gameOver(view, state) {
     const isWin = view.smiley.classList.contains('won');
 
     if (!isWin) {
-        document.getElementById('mute-button').style.display = 'none';
-        const volumeContainer = document.getElementById('volume-container');
-        if (volumeContainer) volumeContainer.style.display = 'none';
-        manageMusic(state, 'stop');
+        manageMusic(state, 'stop'); 
         
         for (const button of view.grid.children) {
             const { x, y } = getButtonPosition(button);
@@ -397,6 +363,8 @@ function gameOver(view, state) {
                 button.classList.add('flagged'); 
             }
         }
+
+        updatePlayerDisplay(state);
     }
 }
 
@@ -466,52 +434,208 @@ function manageMusic(state, action, type = 'bg') {
     if (win_4) win_4.pause();
     if (win_5) win_5.pause();
 
-    if (action === 'stop') return;
+    if (action === 'stop') {
+        state.isPlaying = false;
+        return;
+    }
 
     const current = document.getElementById(type === 'win' ? state.currentWinMusicId : state.currentBgMusicId);    
-    const isMuted = document.getElementById('mute-button').classList.contains('muted');
-    if (!isMuted && current) {
+    
+    
+    if (!state.isMuted && current) {
         current.currentTime = 0;
-        current.play().catch(() => {});
-
         const volumeSlider = document.getElementById('volume-slider');
         if (volumeSlider) {
-            current.volume = volumeSlider.value;
+            current.volume = Number(volumeSlider.value);
         }
         
-        current.play().catch(() => {});
+        current.play()
+            .then(() => {
+                state.isPlaying = true;
+                updatePlayerDisplay(state);
+            })
+            .catch(() => {
+                state.isPlaying = false;
+                updatePlayerDisplay(state);
+            });
+    } else {
+        state.isPlaying = false;
+        updatePlayerDisplay(state);
     }
 }
 
-function toggleMute(view, state) {
-    const button = document.getElementById('mute-button');
-    const text = button.querySelector('.mute-text');
-    const isWin = view.smiley.classList.contains('won');
-    const volumeContainer = document.querySelector('#volume-container');
-    const volumeSlider = document.getElementById('volume-slider');
+function updatePlayerDisplay(state) {
+    const trackInfo = document.getElementById('player-track-info');
+    const btnPlay = document.getElementById('btn-play');
+    const muteBtn = document.getElementById('player-mute-btn');
+    if (!trackInfo) return;
 
-    state.isMuted = !state.isMuted;
-    
-    if (state.isMuted) {
-        button.classList.replace('unmuted', 'muted');
-        text.innerText = 'OFF';
+    const bgTracks = ['music-1', 'music-2', 'music-3', 'music-4', 'music-5', 'music-6', 'music-7'];
+    if (!state.currentBgMusicId) state.currentBgMusicId = bgTracks[0];
 
-        if (volumeContainer) volumeContainer.style.display = 'none'; 
+    const trackIndex = bgTracks.indexOf(state.currentBgMusicId) + 1;
+    const paddedIndex = String(trackIndex).padStart(2, '0');
 
-        manageMusic(state, 'stop');
+    const isWinActive = document.body.classList.contains('win-bg') && state.isPlaying;
+
+    if (isWinActive) {
+        const winTracks = ['win-1', 'win-2', 'win-3', 'win-4', 'win-5'];
+        const winIndex = winTracks.indexOf(state.currentWinMusicId) + 1;
+        trackInfo.innerText = `WIN-${String(winIndex).padStart(2, '0')} PLAY`;
+    } else if (state.isPlaying && !state.isMuted) {
+        trackInfo.innerText = `TRK-${paddedIndex} PLAY`;
+    } else if (state.isMuted && state.isPlaying) {
+        trackInfo.innerText = `TRK-${paddedIndex} MUTE`;
     } else {
-        button.classList.replace('muted', 'unmuted');
-        text.innerText = 'ON';
+        trackInfo.innerText = `TRK-${paddedIndex} STOP`;
+    }
 
-        if (volumeContainer) volumeContainer.style.display = 'flex'; 
-        
+    if (btnPlay) {
+        btnPlay.innerText = (state.isPlaying && !state.isMuted) ? '⏸' : '▶';
+        btnPlay.title = (state.isPlaying && !state.isMuted) ? 'Pause' : 'Play';
+    }
+
+    if (muteBtn) {
+        muteBtn.className = state.isMuted ? 'muted' : 'unmuted';
+    }
+}
+
+
+function initMediaPlayer(state) {
+    const bgTracks = ['music-1', 'music-2', 'music-3', 'music-4', 'music-5', 'music-6', 'music-7'];
+    state.isPlaying = false; 
+
+    const btnPlay = document.getElementById('btn-play');
+    const btnStop = document.getElementById('btn-stop');
+    const btnPrev = document.getElementById('btn-prev');
+    const btnNext = document.getElementById('btn-next');
+    const muteBtn = document.getElementById('player-mute-btn');
+    const volumeSlider = document.getElementById('volume-slider');
+    const volumeContainer = document.getElementById('player-volume-container');
+
+    if (!state.currentBgMusicId) state.currentBgMusicId = bgTracks[0];
+
+    
+    setInterval(() => {
+        const timeInfo = document.getElementById('player-time-info');
+        if (!timeInfo) return;
+
+        let currentAudio = null;
+        if (document.body.classList.contains('win-bg') && state.currentWinMusicId) {
+            currentAudio = document.getElementById(state.currentWinMusicId);
+        } else if (state.currentBgMusicId) {
+            currentAudio = document.getElementById(state.currentBgMusicId);
+        }
+
+        if (currentAudio && state.isPlaying && !currentAudio.paused) {
+            const mins = String(Math.floor(currentAudio.currentTime / 60)).padStart(2, '0');
+            const secs = String(Math.floor(currentAudio.currentTime % 60)).padStart(2, '0');
+            timeInfo.innerText = `${mins}:${secs}`;
+        } else {
+            timeInfo.innerText = '00:00';
+        }
+    }, 250);
+
+    
+    btnPlay.addEventListener('click', () => {
+        playEffect('click');
+        if (state.isPlaying) {
+            let currentAudio = document.getElementById(state.currentBgMusicId);
+            if (document.body.classList.contains('win-bg')) {
+                currentAudio = document.getElementById(state.currentWinMusicId);
+            }
+            if (currentAudio) currentAudio.pause();
+            state.isPlaying = false;
+            updatePlayerDisplay(state);
+        } else {
+            state.musicStarted = true;
+            const isWin = document.body.classList.contains('win-bg');
+            manageMusic(state, 'play', isWin ? 'win' : 'bg');
+        }
+    });
+
+    
+    btnStop.addEventListener('click', () => {
+        playEffect('click');
+        manageMusic(state, 'stop');
+    });
+
+    
+    btnNext.addEventListener('click', () => {
+        playEffect('click');
+        const isWin = document.body.classList.contains('win-bg');
         if (isWin) {
+            const winTracks = ['win-1', 'win-2', 'win-3', 'win-4', 'win-5'];
+            let idx = winTracks.indexOf(state.currentWinMusicId);
+            idx = (idx + 1) % winTracks.length;
+            state.currentWinMusicId = winTracks[idx];
             manageMusic(state, 'play', 'win');
-        } 
-        else if (!state.isGameOver && state.musicStarted) {
+        } else {
+            let idx = bgTracks.indexOf(state.currentBgMusicId);
+            idx = (idx + 1) % bgTracks.length;
+            state.currentBgMusicId = bgTracks[idx];
             manageMusic(state, 'play', 'bg');
         }
-    }   
+    });
+
+    
+    btnPrev.addEventListener('click', () => {
+        playEffect('click');
+        const isWin = document.body.classList.contains('win-bg');
+        if (isWin) {
+            const winTracks = ['win-1', 'win-2', 'win-3', 'win-4', 'win-5'];
+            let idx = winTracks.indexOf(state.currentWinMusicId);
+            idx = (idx - 1 + winTracks.length) % winTracks.length;
+            state.currentWinMusicId = winTracks[idx];
+            manageMusic(state, 'play', 'win');
+        } else {
+            let idx = bgTracks.indexOf(state.currentBgMusicId);
+            idx = (idx - 1 + bgTracks.length) % bgTracks.length;
+            state.currentBgMusicId = bgTracks[idx];
+            manageMusic(state, 'play', 'bg');
+        }
+    });
+
+    
+    muteBtn.addEventListener('click', () => {
+        playEffect('click');
+        state.isMuted = !state.isMuted;
+        
+        if (state.isMuted) {
+            let currentAudio = document.getElementById(state.currentBgMusicId);
+            if (document.body.classList.contains('win-bg')) {
+                currentAudio = document.getElementById(state.currentWinMusicId);
+            }
+            if (currentAudio) currentAudio.pause();
+            state.isPlaying = false;
+        } else {
+            const isWin = document.body.classList.contains('win-bg');
+            manageMusic(state, 'play', isWin ? 'win' : 'bg');
+        }
+        
+        updatePlayerDisplay(state);
+    });
+
+    
+    if (volumeSlider) {
+        volumeSlider.addEventListener('input', (event) => {
+            const volume = Number(event.target.value);
+            const musicTracks = document.querySelectorAll('audio[id^="music-"], audio[id^="win-"]');
+            musicTracks.forEach(audio => {
+                audio.volume = volume;
+            });
+
+            if (volumeContainer) {
+                if (volume === 0) {
+                    volumeContainer.classList.replace('unsilent', 'silent');
+                } else {
+                    volumeContainer.classList.replace('silent', 'unsilent');
+                }
+            }
+        });
+    }
+
+    updatePlayerDisplay(state);
 }
 
 function initTaskbarClock() {
@@ -527,6 +651,142 @@ function initTaskbarClock() {
 
     setInterval(updateClock, 1000);
     updateClock();
+}
+
+function initPlayerWindowControls() {
+    
+    const playerWin = document.getElementById('media-player'); 
+    if (!playerWin) return;
+
+    
+    const titleBar = playerWin.querySelector('.title-bar');
+    
+    const minimizeBtn = document.getElementById('btn-player-minimize');
+    
+    const playerBody = playerWin.querySelector('.window-body');
+
+    
+    if (minimizeBtn && playerBody) {
+        minimizeBtn.addEventListener('click', () => {
+            playerWin.classList.toggle('minimized');
+            
+            if (playerWin.classList.contains('minimized')) {
+                playerBody.style.display = 'none'; 
+            } else {
+                playerBody.style.display = 'block'; 
+            }
+        });
+    }
+
+    
+    if (!titleBar) return;
+
+    let isDragging = false;
+    let startX, startY, initialLeft, initialTop;
+
+    titleBar.addEventListener('mousedown', (e) => {
+        
+        if (e.target.tagName === 'BUTTON' || e.target.closest('button')) return;
+
+        isDragging = true;
+        startX = e.clientX;
+        startY = e.clientY;
+
+        
+        const rect = playerWin.getBoundingClientRect();
+        initialLeft = rect.left;
+        initialTop = rect.top;
+
+        playerWin.style.position = 'fixed';
+        playerWin.style.margin = '0';
+        playerWin.style.left = initialLeft + 'px';
+        playerWin.style.top = initialTop + 'px';
+
+        document.addEventListener('mousemove', onMouseMove);
+        document.addEventListener('mouseup', onMouseUp);
+    });
+
+    function onMouseMove(e) {
+        if (!isDragging) return;
+        
+        const deltaX = e.clientX - startX;
+        const deltaY = e.clientY - startY;
+
+        playerWin.style.left = (initialLeft + deltaX) + 'px';
+        playerWin.style.top = (initialTop + deltaY) + 'px';
+    }
+
+    function onMouseUp() {
+        isDragging = false;
+        document.removeEventListener('mousemove', onMouseMove);
+        document.removeEventListener('mouseup', onMouseUp);
+    }
+}
+
+function initDragAndDrop() {
+    
+    function setupElementDrag(selector) {
+        const windowEl = document.querySelector(selector);
+        if (!windowEl) return;
+
+        
+        const titleBar = windowEl.querySelector('.title-bar') || windowEl;
+        
+        let isDragging = false;
+        let startX, startY;
+        let initialLeft, initialTop;
+
+        titleBar.style.cursor = 'move';
+
+        titleBar.addEventListener('mousedown', (e) => {
+            
+            if (e.button !== 0) return;
+
+            isDragging = true;
+            const rect = windowEl.getBoundingClientRect();
+
+            
+            if (windowEl.style.position !== 'absolute') {
+                windowEl.style.position = 'absolute';
+                windowEl.style.left = rect.left + 'px';
+                windowEl.style.top = rect.top + 'px';
+                windowEl.style.margin = '0'; 
+            }
+
+            initialLeft = parseFloat(windowEl.style.left) || rect.left;
+            initialTop = parseFloat(windowEl.style.top) || rect.top;
+
+            startX = e.clientX;
+            startY = e.clientY;
+
+            document.addEventListener('mousemove', onMouseMove);
+            document.addEventListener('mouseup', onMouseUp);
+
+            e.preventDefault();
+        });
+
+        function onMouseMove(e) {
+            if (!isDragging) return;
+            
+            const dx = e.clientX - startX;
+            const dy = e.clientY - startY;
+
+            windowEl.style.left = (initialLeft + dx) + 'px';
+            windowEl.style.top = (initialTop + dy) + 'px';
+        }
+
+        function onMouseUp() {
+            isDragging = false;
+            document.removeEventListener('mousemove', onMouseMove);
+            document.removeEventListener('mouseup', onMouseUp);
+        }
+    }
+
+    
+    setupElementDrag('.window');
+    
+    
+    setupElementDrag('.media-player-window');
 }
 
 function main() {
@@ -547,6 +807,12 @@ function main() {
     initView(view, state);
     handleGameEvents(view, state);
     initTaskbarClock();
+    
+    initMediaPlayer(state); 
+
+    initPlayerWindowControls();
+
+    initDragAndDrop();
     console.log(state);
 }
 

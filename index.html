@@ -28,14 +28,34 @@
         </div>
     </div>
 </div>
-<div class="music-button">
-    <button id="mute-button" class="unmuted" style="display: none;">
-        <div class="mute-icon"></div>
-        <span class="mute-text">ON</span>
-    </button>
-    <div id="volume-container" class="unsilent" style="display: none;">
-        <div class="volume-icon"></div>
-        <input type="range" id="volume-slider" min="0" max="1" step="0.1" value="0.5">
+<div class="window media-player-window">
+    <div class="title-bar">
+        <div class="title-bar-text">CD Player</div>
+    </div>
+    <div class="window-body">
+        <div class="player-container">
+            <div class="player-display">
+                <div id="player-track-info">TRK-01 STOP</div>
+                <div id="player-time-info">00:00</div>
+            </div>
+            
+            <div class="player-controls">
+                <button id="btn-prev" class="ctrl-btn" title="Previous Track">⏮</button>
+                <button id="btn-play" class="ctrl-btn" title="Play / Pause">▶</button>
+                <button id="btn-stop" class="ctrl-btn" title="Stop">⏹</button>
+                <button id="btn-next" class="ctrl-btn" title="Next Track">⏭</button>
+            </div>
+            
+            <div class="player-audio-panel">
+                <button id="player-mute-btn" class="unmuted" title="Mute">
+                    <div class="mute-icon"></div>
+                </button>
+                <div id="player-volume-container" class="unsilent">
+                    <div class="volume-icon"></div>
+                    <input type="range" id="volume-slider" min="0" max="1" step="0.1" value="0.5">
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 <div class="audio">
