@@ -568,3 +568,7 @@ body.win-bg .player-display {
     z-index: -1;
     image-rendering: pixelated;
 }
+
+.hidden {
+    display: none !important;
+}

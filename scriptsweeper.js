@@ -111,7 +111,10 @@ function restartGame(view, state) {
     document.body.classList.remove('lost-bg', 'win-bg'); 
 
     const resultBg = document.getElementById('game-result-bg'); 
+    const playerWin = document.querySelector('.media-player-window');
+
     if (resultBg) resultBg.classList.remove('shake'); 
+    if (playerWin) playerWin.classList.remove('hidden');
 
     manageMusic(state, 'stop'); 
     state.musicStarted = false; 
@@ -275,9 +278,7 @@ function handleFieldReveal(view, state, button) {
                 }
 
                 if (player) {
-                    player.classList.remove('shake');
-                    void player.offsetWidth;
-                    player.classList.add('shake');
+                    player.classList.add('hidden');
                 }
                 
                 button.classList.add('exploded');
