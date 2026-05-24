@@ -848,7 +848,7 @@ document.addEventListener('DOMContentLoaded', () => {
     ];
 
     elementsToHide.forEach(el => {
-        if (el) el.classList.add('system-hidden');
+        if (el) el.classList.add('hidden');
     });
 
     let isBooted = false;
@@ -864,7 +864,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             setTimeout(() => {
                 elementsToHide.forEach(el => {
-                    if (el) el.classList.remove('system-hidden');
+                    if (el) el.classList.remove('hidden');
                 });
                 window.dispatchEvent(new Event('resize'));
             }, 1500);
