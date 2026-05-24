@@ -811,29 +811,6 @@ function initDragAndDrop() {
     setupElementDrag(playerWindow);
 }
 
-function main() {
-    const state = initGameState({
-        width: 10,
-        height: 12,
-        minesCount: 12,
-    });
-
-    const view = {
-        minesLeft: document.getElementById('mines-left'),
-        smiley: document.getElementById('smiley'),
-        timer: document.getElementById('timer'),
-        grid: document.getElementById('grid'),
-    }
-
-    createFieldButtons(view, state);
-    initView(view, state);
-    handleGameEvents(view, state);
-    initTaskbarClock();
-    initMediaPlayer(state);
-    initPlayerWindowControls();
-    initDragAndDrop();
-    console.log(state);
-}
 function initOC() {
     document.addEventListener('DOMContentLoaded', () => {
         const startButton = document.getElementById('system-start-button');
@@ -871,6 +848,30 @@ function initOC() {
             });
         }
     });
+}
+
+function main() {
+    const state = initGameState({
+        width: 10,
+        height: 12,
+        minesCount: 12,
+    });
+
+    const view = {
+        minesLeft: document.getElementById('mines-left'),
+        smiley: document.getElementById('smiley'),
+        timer: document.getElementById('timer'),
+        grid: document.getElementById('grid'),
+    }
+
+    createFieldButtons(view, state);
+    initView(view, state);
+    handleGameEvents(view, state);
+    initTaskbarClock();
+    initMediaPlayer(state);
+    initPlayerWindowControls();
+    initDragAndDrop();
+    console.log(state);
 }
 
 initOC();
