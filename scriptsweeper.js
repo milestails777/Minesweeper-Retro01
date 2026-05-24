@@ -835,4 +835,41 @@ function main() {
     console.log(state);
 }
 
+document.addEventListener('DOMContentLoaded', () => {
+    const startButton = document.getElementById('system-start-button');
+    const startupSound = document.getElementById('startup-sound');
+    
+    const elementsToHide = [
+        document.querySelector('.window'), 
+        document.querySelector('.media-player-window'), 
+        document.querySelector('.icons'), 
+        document.querySelector('.taskbar-element'), 
+        document.querySelector('.taskbar-element2') 
+    ];
+
+    elementsToHide.forEach(el => {
+        if (el) el.classList.add('system-hidden');
+    });
+
+    let isBooted = false;
+
+    if (startButton) {
+        startButton.addEventListener('click', () => {
+            if (isBooted) return;
+            isBooted = true;
+
+            if (startupSound) {
+                startupSound.play().catch(err => console.log("Audio blocked:", err));
+            }
+
+            setTimeout(() => {
+                elementsToHide.forEach(el => {
+                    if (el) el.classList.remove('system-hidden');
+                });
+                window.dispatchEvent(new Event('resize'));
+            }, 1500);
+        });
+    }
+});
+
 main();
