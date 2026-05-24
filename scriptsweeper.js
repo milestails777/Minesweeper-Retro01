@@ -837,7 +837,7 @@ function main() {
 
 document.addEventListener('DOMContentLoaded', () => {
     const startButton = document.getElementById('system-start-button');
-    const startupSound = document.getElementById('startup-sound');
+    const startupSound = document.getElementById('startup');
     
     const elementsToHide = [
         document.querySelector('.window'), 
